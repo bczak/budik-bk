@@ -1,18 +1,28 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+	<div class="container home-grid">
+		<TimeWidget :fullscreen="fullscreen" v-on:fullscreen="setFullscreen" />
+		<AlarmWidget :fullscreen="fullscreen" v-on:fullscreen="setFullscreen" />
+		<MusicWidget :fullscreen="fullscreen" v-on:fullscreen="setFullscreen" />
+		<PanelWidget />
+	</div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import PanelWidget from '@/components/PanelWidget'
+import TimeWidget from '@/components/TimeWidget'
+import AlarmWidget from '@/components/AlarmWidget'
+import MusicWidget from '@/components/MusicWidget'
 
 export default {
-  name: 'Home',
-  components: {
-    HelloWorld
-  }
+	name: 'Home',
+	components: { MusicWidget, AlarmWidget, PanelWidget, TimeWidget },
+	data: () => ({
+		fullscreen: null
+	}),
+	methods: {
+		setFullscreen(e) {
+			this.fullscreen = e
+		}
+	}
 }
 </script>

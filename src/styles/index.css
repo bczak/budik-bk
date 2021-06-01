@@ -1,0 +1,109 @@
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	user-select: none;
+	cursor: none;
+}
+
+body {
+	transform: scaleX(0.95);
+	background: #000;
+}
+
+.container {
+	position: relative;
+	background: rgb(28, 28, 30);
+	width: 820px;
+	height: 460px;
+	border-radius: 15px;
+	margin: 10px 0;
+	left: -10px;
+	padding: 5px;
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+	overflow: hidden;
+}
+
+.widget {
+	border-radius: 15px;
+	position: absolute;
+}
+
+.widget.time {
+	background: #090d28;
+	transition: all .3s;
+	width: 610px;
+	height: 180px;
+	top: 10px;
+	left: 10px;
+	z-index: 0;
+}
+
+.widget.time.fullscreen {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 10;
+	height: 460px;
+	width: 820px;
+	transition: all .3s;
+}
+
+.widget.alarm {
+	background: #d41010;
+	width: 180px;
+	height: 180px;
+	transition: all .3s;
+	z-index: 1;
+	top: 10px;
+	right: 10px;
+}
+
+.widget.alarm.fullscreen {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 460px;
+	width: 820px;
+	transition: all .3s;
+	z-index: 10;
+}
+
+.widget.event {
+	background: #e71515;
+}
+
+.widget.setting {
+	background: #455A64;
+}
+
+.widget.music {
+	background: #70c21b;
+	width: 180px;
+	height: 180px;
+	transition: all .3s;
+	position: absolute;
+	z-index: 1;
+	top: 200px;
+	right: 10px;
+}
+
+.widget.music.fullscreen {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 460px;
+	width: 820px;
+	transition: all .3s;
+	z-index: 10;
+}
+
+.panel {
+	border-radius: 15px;
+	background: #303F9F;
+	position: absolute;
+	width: 800px;
+	height: 60px;
+	left: 10px;
+	bottom: 10px;
+}
