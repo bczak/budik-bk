@@ -1,9 +1,12 @@
+@import "./fonts/Rubik/index.css";
+
 * {
 	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
 	user-select: none;
 	cursor: none;
+	font-family: Rubik, monospace;
 }
 
 body {
@@ -27,6 +30,7 @@ body {
 .widget {
 	border-radius: 15px;
 	position: absolute;
+	padding: 5px;
 }
 
 .widget.time {
@@ -40,7 +44,6 @@ body {
 }
 
 .widget.time.fullscreen {
-	position: absolute;
 	top: 0;
 	left: 0;
 	z-index: 10;
@@ -60,7 +63,6 @@ body {
 }
 
 .widget.alarm.fullscreen {
-	position: absolute;
 	top: 0;
 	right: 0;
 	height: 460px;
@@ -82,14 +84,12 @@ body {
 	width: 180px;
 	height: 180px;
 	transition: all .3s;
-	position: absolute;
 	z-index: 1;
 	top: 200px;
 	right: 10px;
 }
 
 .widget.music.fullscreen {
-	position: absolute;
 	top: 0;
 	right: 0;
 	height: 460px;
