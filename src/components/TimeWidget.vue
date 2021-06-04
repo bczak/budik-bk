@@ -88,13 +88,11 @@ export default {
 .fullscreen > .content.date {
 	margin: 0;
 	position: absolute;
-	bottom: 0;
 	padding: 35px;
 }
 
 .content.time {
 	text-align: center;
-
 	height: 100%;
 	font-size: 9em;
 	padding: 0 20px;

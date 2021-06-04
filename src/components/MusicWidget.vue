@@ -10,9 +10,6 @@ export default {
 			return this.fullscreen === 'music'
 		}
 	},
-	updated() {
-		console.log(this.fullscreen)
-	},
 	props: {
 		fullscreen: String
 	},
@@ -29,5 +26,7 @@ export default {
 </script>
 
 <style scoped>
-
+.music.widget {
+	background-color: #1DB954;
+}
 </style>
