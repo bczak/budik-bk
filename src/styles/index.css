@@ -8,6 +8,7 @@
 	cursor: none;
 	font-family: Rubik, monospace;
 }
+
 *::-webkit-scrollbar {
 	width: 5px;
 }
@@ -15,6 +16,8 @@
 body {
 	transform: scaleX(0.95);
 	background: #000;
+	width: 800px;
+	height: 480px;
 }
 
 .container {
