@@ -4,7 +4,9 @@ import router from './router'
 import './styles/index.css'
 import './styles/fonts/material-icons.css'
 
-Vue.use(router)
 
-new Vue(App).$mount('#app')
+new Vue({
+  router,
+  render: h => h(App)
+}).$mount('#app')
 
