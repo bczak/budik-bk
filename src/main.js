@@ -3,10 +3,11 @@ import App from './App.vue'
 import router from './router'
 import './styles/index.css'
 import './styles/fonts/material-icons.css'
+import './quasar'
 
 
 new Vue({
-  router,
-  render: h => h(App)
+	router,
+	render: h => h(App)
 }).$mount('#app')
 

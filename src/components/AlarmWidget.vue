@@ -1,29 +1,34 @@
 <template>
-	<div class="widget alarms" v-bind:class="{fullscreen: isFullscreen}" @click="openFull">
-		<span v-if="isFullscreen" class="close material-icons" @click="closeFull">close</span>
-		<div class="alarms">
-			<div class="alarm" v-for="alarm in alarms" :key="alarm.id">
-				<span
-					class="alarm-icon material-icons"
-					v-bind:class="{active: alarm.status}"
-					@click="toggleAlarm(alarm.id, !alarm.status)">alarm</span>
-				<span class="divider"></span>
-				<span class="time" @click="setTime(alarm.id)">{{ alarm.time }}</span>
-			</div>
+	<div class="widget alarms" ref="alarms" v-bind:class="{fullscreen: isFullscreen}" @click="openFull">
+		<q-icon v-if="isFullscreen" @click="closeFull" class="close" name="close"></q-icon>
+		<q-icon v-if="isFullscreen" @click="addAlarm" class="add" name="add_circle_outline"></q-icon>
+		<div v-if="isFullscreen" class="items">
+			<Alarm v-for="alarm in alarms" :key="alarm.id" :alarm="alarm" @delete="saveForUndo"/>
+		</div>
+		<div v-if="!isFullscreen">
+			<q-icon name="alarm" class="alarm-icon"/>
+			<q-item-label class="next-time">{{ nextTime }}</q-item-label>
 		</div>
 	</div>
 </template>
 
 <script>
 
-import { setAlarm, subscribeForAlarms } from '@/api'
+import {createAlarm, subscribeForAlarms} from '@/api'
+import Alarm from '@/components/Alarm'
+import {DateTime} from 'luxon'
+import {parseRepeat} from "@/utils";
 
 export default {
 	name: 'AlarmWidget',
-	components: {  },
+	components: {Alarm},
 	computed: {
 		isFullscreen() {
 			return this.fullscreen === 'alarm'
+		},
+		nextTime() {
+			let dayOfWeek = DateTime.local().weekday - 1;
+			return this.alarms.filter(al => al.status && al.parsedRepeat[dayOfWeek] === '1').map(al => al.time).sort()[0]
 		}
 	},
 	props: {
@@ -31,7 +36,8 @@ export default {
 	},
 	data: () => ({
 		alarms: [],
-		listeners: []
+		listeners: [],
+		saved: null
 	}),
 	mounted() {
 		this.listeners.push(subscribeForAlarms((data) => this.update(data)))
@@ -49,17 +55,29 @@ export default {
 		update(data) {
 			this.alarms = []
 			data.docs.forEach((item) => {
-				this.alarms.push({ ...item.data(), id: item.id })
+				let alarm = item.data()
+				alarm.parsedRepeat = parseRepeat(alarm.repeat)
+				this.alarms.push({...alarm, id: item.id})
 			})
 			this.sortAlarmsByTime()
 		},
-		toggleAlarm(id, status) {
-			if (!this.isFullscreen) return
-			setAlarm(id, status)
+		saveForUndo(alarm) {
+			this.saved = alarm;
+			setTimeout(() => {
+				this.saved = null
+			}, 5500)
+			this.$q.notify({
+				progress: true,
+				timeout: 4000,
+				message: 'Alarm was deleted',
+				multiLine: false,
+				actions: [
+					{label: 'Undo', color: 'yellow', handler: () => createAlarm(this.saved)}
+				]
+			})
 		},
-		setTime(id) {
-			if (!this.isFullscreen) return
-			console.log(id)
+		addAlarm() {
+			createAlarm({time: DateTime.local().toFormat('T'), status: true, repeat: 0, label: ''})
 		},
 		sortAlarmsByTime() {
 			this.alarms = this.alarms.sort((a, b) => {
@@ -72,6 +90,7 @@ export default {
 			}
 		},
 		closeFull() {
+			this.$refs['alarms'].scrollTo(0, 0)
 			this.$emit('fullscreen', null)
 		}
 	}
@@ -80,79 +99,72 @@ export default {
 
 <style scoped>
 .widget.alarms {
-	background-color: #4995be;
+	background: #5d4037;
+	width: 180px;
+	height: 180px;
+	z-index: 1;
+	top: 10px;
+	right: 10px;
+	left: 590px;
+	transition: all .3s;
+	overflow: hidden;
+}
 
+.widget.alarms.fullscreen {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 460px;
+	overflow: auto;
+	width: 780px;
+	z-index: 10;
+	transition: all .3s;
 }
 
 .close {
 	font-size: 50px;
-	position: absolute;
-	margin: 10px;
+	position: fixed;
+	margin: 30px;
 	top: 0;
-	color: rgba(0, 0, 0, 0.5);
+	right: 0;
+	color: rgba(255, 255, 255, 0.9);
 }
 
-.alarms {
-	overflow: hidden;
+.add {
+	font-size: 50px;
+	position: fixed;
+	margin: 30px;
+	bottom: 0;
+	right: 0;
+	color: rgba(255, 255, 255, 1);
+	transition: all .3s;
+}
+
+
+.items {
 	display: flex;
 	flex-direction: column;
-	padding: 1px;
-	transition: all .3s;
-}
-
-.alarm {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	font-size: 35px;
-	margin: 1px 10px;
-	color: #eee;
-	transition: all .3s;
-}
-
-.fullscreen .alarm {
-	padding: 20px 20px;
-	font-size: 50px;
-	transition: all .3s;
-	margin: 5px 10px;
 	color: white;
-	border-radius: 15px;
-	background: rgba(0, 0, 0, 0.3);
+	font-size: 29px;
+	padding-left: 5px;
 }
 
-.fullscreen .alarm-icon {
-	font-size: 45px;
-	transition: all .3s;
-
-}
-
-.fullscreen .divider {
-	height: 50px;
-	margin: 0 20px
+.fullscreen .items {
+	padding: 5px 80px 5px 10px;
+	font-size: 40px;
 }
 
 .alarm-icon {
-	font-size: 32px;
-	margin-top: -2px;
-	color: #444;
+	color: white;
+	font-size: 100px;
+	margin: 25px 35px 0;
 	transition: all .3s;
-
 }
+.next-time {
+	color: white;
+	font-size: 35px;
+	text-align: center;
 
-.divider {
-	height: 28px;
-	margin: 0 8px;
-	border: 2px solid orangered;
-	border-radius: 2px;
-}
-
-.alarm-icon.active {
-	color: white
-}
-
-.fullscreen > .alarms {
-	padding: 50px;
-	transition: all .3s;
-	overflow-y: scroll;
 }
 </style>

@@ -14,7 +14,6 @@
 }
 
 body {
-	transform: scaleX(0.95);
 	background: #000;
 	width: 800px;
 }
@@ -22,13 +21,11 @@ body {
 .container {
 	position: relative;
 	background: rgb(28, 28, 30);
-	width: 820px;
+	width: 780px;
 	height: 460px;
 	border-radius: 15px;
-	margin: 10px 0;
-	left: -10px;
+	margin: 10px;
 	padding: 5px;
-	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 	overflow: hidden;
 }
 
@@ -36,42 +33,6 @@ body {
 	border-radius: 15px;
 	position: absolute;
 	padding: 5px;
-}
-
-.widget.time {
-	background: #090d28;
-	transition: all .3s;
-	width: 610px;
-	height: 180px;
-	top: 10px;
-	left: 10px;
-	z-index: 0;
-}
-
-.widget.time.fullscreen {
-	top: 0;
-	left: 0;
-	z-index: 10;
-	height: 460px;
-	width: 820px;
-	transition: all .3s;
-}
-
-.widget.alarms {
-	background: #5d4037;
-	width: 180px;
-	height: 180px;
-	z-index: 1;
-	top: 10px;
-	right: 10px;
-}
-
-.widget.alarms.fullscreen {
-	top: 0;
-	right: 0;
-	height: 460px;
-	width: 820px;
-	z-index: 10;
 }
 
 .widget.event {

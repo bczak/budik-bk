@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { DateTime } from 'luxon'
+import {DateTime} from 'luxon'
 
 export default {
 	name: 'TimeWidget',
@@ -70,11 +70,24 @@ export default {
 	flex-direction: row;
 	transition: all .3s;
 	flex-wrap: nowrap;
+	background: #0d1921;
+	width: 570px;
+	height: 180px;
+	top: 10px;
+	left: 10px;
+	z-index: 0;
 }
 
 .widget.time.fullscreen {
 	flex-wrap: nowrap;
+	position: absolute;
 	transition: all .3s;
+	top: 0;
+	border-radius: 15px;
+	left: 0;
+	z-index: 10;
+	height: 460px;
+	width: 780px;
 }
 
 .fullscreen > .content.time {
@@ -82,7 +95,6 @@ export default {
 	transition: all .3s;
 	margin-left: 0;
 	text-align: center;
-
 }
 
 .fullscreen > .content.date {
