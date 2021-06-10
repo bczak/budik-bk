@@ -7,7 +7,7 @@
 		</div>
 		<div v-if="!isFullscreen">
 			<q-icon name="alarm" class="alarm-icon"/>
-			<q-item-label class="next-time">{{ nextTime }}</q-item-label>
+			<q-item-label class="next-time">{{ nextTime || '' }}</q-item-label>
 		</div>
 	</div>
 </template>
