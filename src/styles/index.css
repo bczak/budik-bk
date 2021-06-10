@@ -62,12 +62,20 @@ body {
 	z-index: 10;
 }
 
-.panel {
-	border-radius: 15px;
-	background: #303F9F;
-	position: absolute;
-	width: 800px;
-	height: 60px;
-	left: 10px;
-	bottom: 10px;
+
+.button.save {
+	background: green;
+	color: white
+}
+
+.button.cancel {
+	background: #e71515;
+	color: black;
+}
+
+.buttons {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	padding: 0 10px;
 }

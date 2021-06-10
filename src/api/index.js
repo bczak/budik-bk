@@ -12,6 +12,7 @@ export async function setAlarm(id, status = true) {
 
 export async function updateAlarm(alarm) {
 	if (!alarm) return;
+	delete alarm.parsedRepeat
 	await firebase.firestore().collection('alarms').doc(alarm.id).update({...alarm})
 }
 

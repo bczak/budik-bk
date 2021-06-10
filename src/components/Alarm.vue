@@ -23,6 +23,9 @@
       </div>
     </q-dialog>
     <q-icon name="history" @click="setRepeat()" color="gold" class="repeat" />
+    <q-dialog v-model="repeatModal" full-width>
+      <RepeatPicker :repeat="editAlarm.parsedRepeat" @change="(repeat) => updateRepeat(repeat)" />
+    </q-dialog>
     <q-icon name="delete" @click="deleteAlarm()" color="red" class="delete" />
     <q-dialog v-model="timeModal" full-height>
       <q-time :value="editAlarm.time" @input="(value) => editAlarm.time = value" format24h>
@@ -38,15 +41,18 @@
 <script>
 import { setAlarm, updateAlarm, deleteAlarm } from '@/api'
 import SimpleKeyboard from '@/components/SimpleKeyboard'
+import RepeatPicker from '@/components/RepeatPicker'
+import { stringifyRepeat } from '@/utils'
 
 export default {
   name: 'Alarm',
-  components: { SimpleKeyboard },
+  components: { RepeatPicker, SimpleKeyboard },
   props: {
     alarm: Object
   },
   data: () => ({
     timeModal: false,
+    repeatModal: false,
     labelModal: false,
     editAlarm: {},
     keyboardClass: 'simple-keyboard',
@@ -54,6 +60,9 @@ export default {
   }),
   mounted() {
     this.editAlarm = JSON.parse(JSON.stringify(this.alarm))
+    console.log(this.editAlarm.parsedRepeat)
+  },
+  updated() {
   },
   methods: {
     onChange(text) {
@@ -101,12 +110,20 @@ export default {
     updateTime() {
       updateAlarm(this.editAlarm)
     },
-    setRepeat() {
-    
+    setRepeat(repeat) {
+      this.repeatModal = true
+      if (repeat) {
+        this.editAlarm.parsedRepeat = repeat
+      }
     },
     deleteAlarm() {
       this.$emit('delete', JSON.parse(JSON.stringify(this.alarm)))
       deleteAlarm(this.alarm.id)
+    },
+    updateRepeat(repeat) {
+      this.editAlarm.parsedRepeat = repeat
+      this.editAlarm.repeat = stringifyRepeat(repeat)
+      updateAlarm({ ...this.editAlarm })
     }
   }
   
@@ -202,20 +219,4 @@ export default {
   background: #0d1921;
 }
 
-.button.save {
-  background: green;
-  color: white
-}
-
-.button.cancel {
-  background: #e71515;
-  color: black;
-}
-
-.buttons {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 0 10px;
-}
 </style>
