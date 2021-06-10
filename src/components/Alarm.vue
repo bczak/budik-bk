@@ -26,6 +26,7 @@
     <q-dialog v-model="repeatModal" full-width>
       <RepeatPicker :repeat="editAlarm.parsedRepeat" @change="(repeat) => updateRepeat(repeat)" />
     </q-dialog>
+    <q-icon name="audiotrack" @click="setSound" class="sound" />
     <q-icon name="delete" @click="deleteAlarm()" color="red" class="delete" />
     <q-dialog v-model="timeModal" full-height>
       <q-time :value="editAlarm.time" @input="(value) => editAlarm.time = value" format24h>
@@ -78,6 +79,9 @@ export default {
     },
     reset() {
       this.editAlarm = this.alarm
+    },
+    setSound() {
+    
     },
     show(e) {
       this.input = e.target
@@ -167,7 +171,12 @@ export default {
 }
 
 .days {
-  font-size: 20px;
+  font-size: 18px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 91px;
+  text-align: right;
+
 }
 
 .button {
@@ -198,6 +207,11 @@ export default {
 .keyboard {
   background: white;
   border-radius: 15px;
+}
+
+.sound {
+  color: #1DB954;
+  margin: 0 5px 0 0
 }
 
 .label-input {
