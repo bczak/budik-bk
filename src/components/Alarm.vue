@@ -1,41 +1,38 @@
 <template>
-  <div class="alarm" :key="alarm.id">
+  <div class="wrapper">
+    <div class="alarm" :key="alarm.id">
 		<span
       class="alarm-icon material-icons"
       v-bind:class="{disable: !alarm.status}"
       @click="toggleAlarm(!alarm.status)">alarm</span>
-    <span class="divider"></span>
-    <span class="time" @click="setTime()">{{ alarm.time }}</span>
-    <span class="label" v-bind:class="{'label-hover': !alarm.label}" @click="setLabel()">{{
-        alarm.label || 'Label'
-      }}</span>
-    <span class="days" @click="setLabel()">{{ repeatToDays(alarm.parsedRepeat) }}</span>
-    <q-dialog v-model="labelModal" full-height full-width persistent>
-      <div class="keyboard">
-        
-        <q-input class="label-input" outlined v-model="editAlarm.label" type="text" placeholder="Text input"
-                 @focus="show" />
-        <div class="buttons">
-          <q-btn class="button cancel" @click="resetLabel" rounded>Cancel</q-btn>
-          <q-btn class="button save" @click="updateLabel" rounded>Save</q-btn>
+      <span class="divider"></span>
+      <span class="time" @click="setTime()">{{ alarm.time }}</span>
+      <span class="label" v-bind:class="{'label-hover': !alarm.label}" @click="setLabel()">{{
+          alarm.label || 'Label'
+        }}</span>
+      <q-dialog v-model="labelModal" full-height full-width persistent>
+        <div class="keyboard">
+          <q-input class="label-input" outlined v-model="editAlarm.label" type="text" placeholder="Text input"
+                   @focus="show" />
+          <div class="buttons">
+            <q-btn class="button cancel" @click="resetLabel" rounded>Cancel</q-btn>
+            <q-btn class="button save" @click="updateLabel" rounded>Save</q-btn>
+          </div>
+          <SimpleKeyboard @onChange="onChange" @onKeyPress="onKeyPress" :input="editAlarm.label" />
         </div>
-        <SimpleKeyboard @onChange="onChange" @onKeyPress="onKeyPress" :input="editAlarm.label" />
-      </div>
-    </q-dialog>
-    <q-icon name="history" @click="setRepeat()" color="gold" class="repeat" />
-    <q-dialog v-model="repeatModal" full-width>
-      <RepeatPicker :repeat="editAlarm.parsedRepeat" @change="(repeat) => updateRepeat(repeat)" />
-    </q-dialog>
-    <q-icon name="audiotrack" @click="setSound" class="sound" />
-    <q-icon name="delete" @click="deleteAlarm()" color="red" class="delete" />
-    <q-dialog v-model="timeModal" full-height>
-      <q-time :value="editAlarm.time" @input="(value) => editAlarm.time = value" format24h>
-        <div class="row items-center justify-end q-gutter-sm">
-          <q-btn class="button" label="Cancel" color="primary" @click="reset" flat v-close-popup />
-          <q-btn class="button" label="OK" color="primary" @click="updateTime" v-close-popup />
-        </div>
-      </q-time>
-    </q-dialog>
+      </q-dialog>
+      <q-icon name="audiotrack" @click="setSound" class="sound" />
+      <q-icon name="delete" @click="deleteAlarm()" color="red" class="delete" />
+      <q-dialog v-model="timeModal" full-height>
+        <q-time :value="editAlarm.time" @input="(value) => editAlarm.time = value" format24h>
+          <div class="row items-center justify-end q-gutter-sm">
+            <q-btn class="button" label="Cancel" color="primary" @click="reset" flat v-close-popup />
+            <q-btn class="button" label="OK" color="primary" @click="updateTime" v-close-popup />
+          </div>
+        </q-time>
+      </q-dialog>
+    </div>
+    <RepeatPicker :repeat="alarm.parsedRepeat" @change="(repeat) => updateRepeat(repeat)" />
   </div>
 </template>
 
@@ -61,7 +58,6 @@ export default {
   }),
   mounted() {
     this.editAlarm = JSON.parse(JSON.stringify(this.alarm))
-    console.log(this.editAlarm.parsedRepeat)
   },
   updated() {
   },
@@ -143,6 +139,13 @@ export default {
   overflow: hidden;
 }
 
+.wrapper {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 15px;
+  margin: 10px 0;
+  
+}
+
 .divider {
   border: 2px solid #0088cc;
   height: 30px;
@@ -151,10 +154,7 @@ export default {
 }
 
 .fullscreen .alarm {
-  border-radius: 15px;
-  background: rgba(0, 0, 0, 0.5);
   padding: 10px;
-  margin: 10px 0;
   transition: all .3s;
 }
 
@@ -176,7 +176,7 @@ export default {
   text-overflow: ellipsis;
   min-width: 91px;
   text-align: right;
-
+  margin-top: 20px;
 }
 
 .button {
@@ -190,10 +190,12 @@ export default {
 
 .label {
   flex-grow: 2;
+  margin-top: 10px;
   margin-right: 10px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  font-size: 25px;
 }
 
 .label-hover {
@@ -211,7 +213,7 @@ export default {
 
 .sound {
   color: #1DB954;
-  margin: 0 5px 0 0
+  margin: 0 10px
 }
 
 .label-input {

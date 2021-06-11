@@ -28,25 +28,25 @@ export default {
 <style scoped>
 .repeat-picker {
   border-radius: 15px;
-  background: #0d1921;
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
-  padding: 15px
+  justify-content: space-between;
+  padding: 15px 15px 15px 75px
 }
 
 .day {
-  width: 70px;
-  height: 70px;
+  width: 50px;
+  height: 50px;
   border-radius: 15px;
-  background: #5d4037;
+  background: #444;
   color: white;
   text-align: center;
-  padding: 17px 0;
-  font-size: 25px;
+  padding: 12px 0;
+  font-size: 20px;
 }
 
 .selected {
   background: #0088cc;
+  color: black;
 }
 </style>

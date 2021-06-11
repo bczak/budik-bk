@@ -43,24 +43,6 @@ body {
 	background: #455A64;
 }
 
-.widget.music {
-	background: #70c21b;
-	width: 180px;
-	height: 180px;
-	transition: all .3s;
-	z-index: 1;
-	top: 200px;
-	right: 10px;
-}
-
-.widget.music.fullscreen {
-	top: 0;
-	right: 0;
-	height: 460px;
-	width: 820px;
-	transition: all .3s;
-	z-index: 10;
-}
 
 
 .button.save {
