@@ -1,5 +1,6 @@
 import firebase from 'firebase/app'
 import 'firebase/firestore'
+import 'firebase/functions'
 
 const firebaseConfig = {
 	apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
@@ -12,5 +13,6 @@ const firebaseConfig = {
 }
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig)
-
+firebase.firestore().useEmulator('localhost', 8080)
+firebase.functions().useEmulator('localhost', 5001)
 export default app
