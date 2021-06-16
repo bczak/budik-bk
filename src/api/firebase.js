@@ -1,6 +1,6 @@
-import firebase from 'firebase/app'
-import 'firebase/firestore'
-import 'firebase/functions'
+import firebase from "firebase/app";
+import "firebase/functions";
+import "firebase/firestore";
 
 const firebaseConfig = {
 	apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
@@ -9,10 +9,12 @@ const firebaseConfig = {
 	storageBucket: process.env.VUE_APP_FIREBASE_STORAGE_BUCKET,
 	messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID,
 	appId: process.env.VUE_APP_FIREBASE_APP_ID,
-	measurementId: process.env.VUE_APP_FIREBASE_MEASUREMENT_ID
-}
+	measurementId: process.env.VUE_APP_FIREBASE_MEASUREMENT_ID,
+};
 // Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig)
-firebase.firestore().useEmulator('localhost', 8080)
-firebase.functions().useEmulator('localhost', 5001)
-export default app
+const app = firebase.initializeApp(firebaseConfig);
+const server = "localhost";
+firebase.firestore().useEmulator(server, 8080);
+firebase.functions().useEmulator(server, 5001);
+
+export default app;

@@ -15,6 +15,7 @@
     "quasar": "^1.0.0",
     "simple-keyboard": "^3.1.35",
     "simple-keyboard-layouts": "^3.0.104",
+    "spotify-web-api-node": "^5.0.2",
     "vue": "^2.6.11",
     "vue-keyboard": "^3.1.0",
     "vue-material-design-icons": "^4.11.0",
