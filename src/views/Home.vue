@@ -17,7 +17,7 @@ export default {
 	name: 'Home',
 	components: {MusicWidget, AlarmWidget, PanelWidget, TimeWidget},
 	data: () => ({
-		fullscreen: 'alarm'
+		fullscreen: ''
 	}),
 	methods: {
 		setFullscreen(e) {

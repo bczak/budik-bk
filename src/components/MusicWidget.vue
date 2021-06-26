@@ -3,6 +3,9 @@
     <div v-if="!isFullscreen">
       <q-icon name="audiotrack" class="music-icon" />
     </div>
+    <div v-else>
+    
+    </div>
   </div>
 </template>
 
@@ -24,6 +27,9 @@ export default {
       } else {
         this.$emit('fullscreen', 'music')
       }
+    },
+    play() {
+    
     }
   }
 }

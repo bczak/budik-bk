@@ -43,6 +43,10 @@ body {
 	background: #455A64;
 }
 
+.firebase-emulator-warning {
+	display: none !important;
+}
+
 
 
 .button.save {
@@ -60,4 +64,17 @@ body {
 	flex-direction: row;
 	justify-content: space-between;
 	padding: 0 10px;
+}
+
+
+.q-slider__track-container {
+	height: 60px !important;
+	background: rgba(0,0,0,0) !important;
+	top: 1px !important;
+}
+.q-slider__track {
+	border-radius: 15px;
+}
+.q-slider__thumb-container {
+	display: none !important;
 }
