@@ -70,7 +70,7 @@ export default {
 	flex-direction: row;
 	transition: all .3s;
 	flex-wrap: nowrap;
-	background: #0d1921;
+	background: #1f8cd2;
 	width: 570px;
 	height: 180px;
 	top: 10px;

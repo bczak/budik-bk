@@ -12,7 +12,6 @@
       :step="5"
       label-color="black"
     />
-    
     <div v-else class="icons">
       <q-icon color="white" @click="showSlider" class="icon" :name="volumeIcon" />
     </div>

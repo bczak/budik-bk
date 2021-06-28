@@ -1,7 +1,7 @@
 <template>
-	<div class="widget music" v-bind:class="{fullscreen: isFullscreen}" @click="toggleFullscreen()">
+	<div class="widget settings" v-bind:class="{fullscreen: isFullscreen}" @click="toggleFullscreen()">
 		<div v-if="!isFullscreen">
-			<q-icon name="audiotrack" class="music-icon" />
+			<q-icon name="settings" class="settings-icon" />
 		</div>
 		<div v-else>
 		
@@ -11,10 +11,10 @@
 
 <script>
 export default {
-	name: 'MusicWidget',
+	name: 'SettingsWidget',
 	computed: {
 		isFullscreen() {
-			return this.fullscreen === 'music'
+			return this.fullscreen === 'settings'
 		}
 	},
 	props: {
@@ -22,14 +22,11 @@ export default {
 	},
 	methods: {
 		toggleFullscreen() {
-			if (this.fullscreen === 'music') {
+			if (this.fullscreen === 'settings') {
 				this.$emit('fullscreen', null)
 			} else {
-				this.$emit('fullscreen', 'music')
+				this.$emit('fullscreen', 'settings')
 			}
-		},
-		play() {
-		
 		}
 	}
 }
@@ -37,19 +34,18 @@ export default {
 
 <style scoped>
 
-.widget.music {
-	background-color: #1DB954;
+.widget.settings {
+	background-color: #717874;
 	width: 180px;
 	height: 180px;
 	transition: all .3s;
-	z-index: 1;
+	z-index: 0;
 	top: 200px;
 	position: absolute;
-	right: 10px;
-	left: calc(20px + 180px);
+	left: 10px;
 }
 
-.widget.music.fullscreen {
+.widget.settings.fullscreen {
 	right: 0;
 	left: 0;
 	top: 0;
@@ -61,11 +57,10 @@ export default {
 	z-index: 10;
 }
 
-.music-icon {
-	color: #222;
+.settings-icon {
+	color: #eee;
 	font-size: 100px;
 	margin: 35px;
 	transition: all .3s;
 }
 </style>
-
