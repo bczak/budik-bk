@@ -1,5 +1,6 @@
 <template>
-	<div class="widget music" v-bind:class="{fullscreen: isFullscreen}" @click="toggleFullscreen()">
+	<div class="widget music" v-bind:class="{fullscreen: isFullscreen}" @click="openFull">
+		<q-icon v-if="isFullscreen" @click="closeFull" class="close" name="close"></q-icon>
 		<div v-if="!isFullscreen">
 			<q-icon name="audiotrack" class="music-icon" />
 		</div>
@@ -21,12 +22,13 @@ export default {
 		fullscreen: String
 	},
 	methods: {
-		toggleFullscreen() {
-			if (this.fullscreen === 'music') {
-				this.$emit('fullscreen', null)
-			} else {
+		openFull(e) {
+			if (!e.target.className.split(' ').includes('close')) {
 				this.$emit('fullscreen', 'music')
 			}
+		},
+		closeFull() {
+			this.$emit('fullscreen', null)
 		},
 		play() {
 		
@@ -38,7 +40,7 @@ export default {
 <style scoped>
 
 .widget.music {
-	background-color: #1DB954;
+	background-color: #34A853;
 	width: 180px;
 	height: 180px;
 	transition: all .3s;
@@ -62,10 +64,20 @@ export default {
 }
 
 .music-icon {
-	color: #222;
+	color: #fff;
 	font-size: 100px;
 	margin: 35px;
 	transition: all .3s;
+}
+
+
+.close {
+	font-size: 50px;
+	position: fixed;
+	margin: 30px;
+	top: 0;
+	right: 0;
+	color: rgba(0, 0, 0, 0.7);
 }
 </style>
 

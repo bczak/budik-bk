@@ -143,7 +143,6 @@ export default {
   background: rgba(0, 0, 0, 0.5);
   border-radius: 15px;
   margin: 10px 0;
-  
 }
 
 .divider {

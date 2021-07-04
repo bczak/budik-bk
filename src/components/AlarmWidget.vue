@@ -3,10 +3,10 @@
 		<q-icon v-if="isFullscreen" @click="closeFull" class="close" name="close"></q-icon>
 		<q-icon v-if="isFullscreen" @click="addAlarm" class="add" name="add_circle_outline"></q-icon>
 		<div v-if="isFullscreen" class="items">
-			<Alarm v-for="alarm in alarms" :key="alarm.id" :alarm="alarm" @delete="saveForUndo"/>
+			<Alarm v-for="alarm in alarms" :key="alarm.id" :alarm="alarm" @delete="saveForUndo" />
 		</div>
 		<div v-if="!isFullscreen">
-			<q-icon name="alarm" class="alarm-icon"/>
+			<q-icon name="alarm" class="alarm-icon" />
 			<q-item-label class="next-time">{{ nextTime || '' }}</q-item-label>
 		</div>
 	</div>
@@ -14,20 +14,20 @@
 
 <script>
 
-import {createAlarm, subscribeForAlarms} from '@/api'
+import { createAlarm, subscribeForAlarms } from '@/api'
 import Alarm from '@/components/Alarm'
-import {DateTime} from 'luxon'
-import {parseRepeat} from "@/utils";
+import { DateTime } from 'luxon'
+import { parseRepeat } from '@/utils'
 
 export default {
 	name: 'AlarmWidget',
-	components: {Alarm},
+	components: { Alarm },
 	computed: {
 		isFullscreen() {
 			return this.fullscreen === 'alarm'
 		},
 		nextTime() {
-			let dayOfWeek = DateTime.local().weekday - 1;
+			let dayOfWeek = DateTime.local().weekday - 1
 			return this.alarms.filter(al => al.status && al.parsedRepeat[dayOfWeek] === '1').map(al => al.time).sort()[0]
 		}
 	},
@@ -57,12 +57,12 @@ export default {
 			data.docs.forEach((item) => {
 				let alarm = item.data()
 				alarm.parsedRepeat = parseRepeat(alarm.repeat)
-				this.alarms.push({...alarm, id: item.id})
+				this.alarms.push({ ...alarm, id: item.id })
 			})
 			this.sortAlarmsByTime()
 		},
 		saveForUndo(alarm) {
-			this.saved = alarm;
+			this.saved = alarm
 			setTimeout(() => {
 				this.saved = null
 			}, 5500)
@@ -72,12 +72,12 @@ export default {
 				message: 'Alarm was deleted',
 				multiLine: false,
 				actions: [
-					{label: 'Undo', color: 'yellow', handler: () => createAlarm(this.saved)}
+					{ label: 'Undo', color: 'yellow', handler: () => createAlarm(this.saved) }
 				]
 			})
 		},
 		addAlarm() {
-			createAlarm({time: DateTime.local().toFormat('T'), status: true, repeat: 0, label: ''})
+			createAlarm({ time: DateTime.local().toFormat('T'), status: true, repeat: 0, label: '' })
 		},
 		sortAlarmsByTime() {
 			this.alarms = this.alarms.sort((a, b) => {
@@ -161,10 +161,11 @@ export default {
 	margin: 25px 35px 0;
 	transition: all .3s;
 }
+
 .next-time {
 	color: white;
 	font-size: 35px;
 	text-align: center;
-
+	
 }
 </style>
