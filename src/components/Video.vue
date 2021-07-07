@@ -1,5 +1,5 @@
 <template>
-	<div class="item">
+	<div class="item" @click="play">
 		<img :src="video.snippet.thumbnails.high.url" class="item-image" alt="image" />
 		<div class="item-title">{{ video.snippet.title }}</div>
 	</div>
@@ -10,7 +10,12 @@ export default {
 	props: {
 		video: Object
 	},
-	name: 'Video'
+	name: 'Video',
+	methods: {
+		play() {
+			this.$emit('play', this.video)
+		}
+	}
 }
 </script>
 
@@ -36,6 +41,7 @@ export default {
 	color: white;
 	background: rgba(0, 0, 0, 0.7);
 	padding: 5px;
+	width: 100%;
 }
 
 </style>

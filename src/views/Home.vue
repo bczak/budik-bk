@@ -9,10 +9,10 @@
 </template>
 
 <script>
-import PanelWidget from '@/components/PanelWidget'
-import TimeWidget from '@/components/TimeWidget'
-import AlarmWidget from '@/components/AlarmWidget'
-import MusicWidget from '@/components/MusicWidget'
+import PanelWidget from '../components/PanelWidget'
+import TimeWidget from '../components/TimeWidget'
+import AlarmWidget from '../components/AlarmWidget'
+import MusicWidget from '../components/MusicWidget'
 import SettingsWidget from '../components/SettingsWidget'
 
 export default {

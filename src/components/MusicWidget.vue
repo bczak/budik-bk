@@ -2,11 +2,12 @@
 	<div class="widget music" v-bind:class="{fullscreen: isFullscreen}" @click="openFull">
 		<q-icon v-if="isFullscreen" @click="closeFull" class="close" name="close" />
 		<q-icon v-if="isFullscreen" @click="search" class="search" name="search" />
+		<Player ref="player" class="player" key="player" :class="{hidden: !isFullscreen}" />
 		<div v-if="!isFullscreen">
 			<q-icon name="audiotrack" class="music-icon" />
 		</div>
 		<div v-else class="items">
-			<Video v-for="video in videos" :key="video.id" :video="video" />
+			<Video @play="play" v-for="video in videos" :key="video.id" :video="video" />
 		</div>
 	</div>
 </template>
@@ -14,9 +15,10 @@
 <script>
 import { fetchVideos } from '../api'
 import Video from './Video'
+import Player from './Player'
 
 export default {
-	components: { Video },
+	components: { Video, Player },
 	name: 'MusicWidget',
 	computed: {
 		isFullscreen() {
@@ -46,6 +48,9 @@ export default {
 		},
 		search() {
 			console.log('here')
+		},
+		play(video) {
+			this.$refs.player.load(video)
 		}
 	}
 }
@@ -83,6 +88,10 @@ export default {
 	font-size: 100px !important;
 	margin: 30px;
 	transition: all .3s;
+}
+
+.player {
+	flex-grow: 3;
 }
 
 
