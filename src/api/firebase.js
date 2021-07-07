@@ -23,23 +23,14 @@ firebase.functions().useEmulator(server, 5001)
 
 firebase.auth().onAuthStateChanged(async (user) => {
 	let result = await firebase.auth().getRedirectResult()
-	console.log(user)
-	if (!result.credential) {
+	if (result.credential) {
 		await firebase.firestore().collection('settings').doc('google').set({
-			user: null,
-			accessToken: null,
-			refreshToken: null,
+			user: JSON.parse(JSON.stringify(user)),
+			refreshToken: user.refreshToken,
 			updated: Date.now()
 		})
-		return
 	}
-	let credential = result.credential
-	await firebase.firestore().collection('settings').doc('google').set({
-		user: JSON.parse(JSON.stringify(user)),
-		accessToken: credential.accessToken,
-		refreshToken: credential.refreshToken,
-		updated: Date.now()
-	})
+
 })
 
 export default app

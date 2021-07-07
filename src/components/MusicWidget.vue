@@ -6,17 +6,17 @@
 			<q-icon name="audiotrack" class="music-icon" />
 		</div>
 		<div v-else class="items">
-			<div class="item" v-for="video in videos" :key="video.id">
-				{{ video.snippet.title }}
-			</div>
+			<Video v-for="video in videos" :key="video.id" :video="video" />
 		</div>
 	</div>
 </template>
 
 <script>
 import { fetchVideos } from '../api'
+import Video from './Video'
 
 export default {
+	components: { Video },
 	name: 'MusicWidget',
 	computed: {
 		isFullscreen() {
@@ -33,12 +33,12 @@ export default {
 	methods: {
 		async openFull(e) {
 			if (!e.target.className.split(' ').includes('close')) {
+				if (this.isFullscreen) return
 				this.$emit('fullscreen', 'music')
 				let result = await fetchVideos(null)
 				if (result === null) return
 				this.pageToken = result.nextPageToken || null
 				this.videos = result.items
-				console.log(this.videos[0])
 			}
 		},
 		closeFull() {
@@ -75,6 +75,7 @@ export default {
 	width: 780px;
 	transition: all .3s;
 	z-index: 10;
+	overflow-y: scroll;
 }
 
 .music-icon {
@@ -105,13 +106,5 @@ export default {
 	flex-wrap: wrap;
 }
 
-.item {
-	width: 215px;
-	height: 150px;
-	border: 1px solid rgba(0, 0, 0, 0.5);
-	padding: 10px;
-	margin: 10px;
-	border-radius: 15px;
-}
 </style>
 
