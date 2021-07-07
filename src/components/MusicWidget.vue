@@ -1,16 +1,21 @@
 <template>
 	<div class="widget music" v-bind:class="{fullscreen: isFullscreen}" @click="openFull">
-		<q-icon v-if="isFullscreen" @click="closeFull" class="close" name="close"></q-icon>
+		<q-icon v-if="isFullscreen" @click="closeFull" class="close" name="close" />
+		<q-icon v-if="isFullscreen" @click="search" class="search" name="search" />
 		<div v-if="!isFullscreen">
 			<q-icon name="audiotrack" class="music-icon" />
 		</div>
-		<div v-else>
-		
+		<div v-else class="items">
+			<div class="item" v-for="video in videos" :key="video.id">
+				{{ video.snippet.title }}
+			</div>
 		</div>
 	</div>
 </template>
 
 <script>
+import { fetchVideos } from '../api'
+
 export default {
 	name: 'MusicWidget',
 	computed: {
@@ -21,23 +26,32 @@ export default {
 	props: {
 		fullscreen: String
 	},
+	data: () => ({
+		videos: [],
+		pageToken: null
+	}),
 	methods: {
-		openFull(e) {
+		async openFull(e) {
 			if (!e.target.className.split(' ').includes('close')) {
 				this.$emit('fullscreen', 'music')
+				let result = await fetchVideos(null)
+				if (result === null) return
+				this.pageToken = result.nextPageToken || null
+				this.videos = result.items
+				console.log(this.videos[0])
 			}
 		},
 		closeFull() {
 			this.$emit('fullscreen', null)
 		},
-		play() {
-		
+		search() {
+			console.log('here')
 		}
 	}
 }
 </script>
 
-<style scoped>
+<style>
 
 .widget.music {
 	background-color: #34A853;
@@ -65,19 +79,39 @@ export default {
 
 .music-icon {
 	color: #fff;
-	font-size: 100px;
-	margin: 35px;
+	font-size: 100px !important;
+	margin: 30px;
 	transition: all .3s;
 }
 
 
-.close {
-	font-size: 50px;
-	position: fixed;
+.close, .search {
+	font-size: 50px !important;
+	position: fixed !important;
 	margin: 30px;
 	top: 0;
 	right: 0;
 	color: rgba(0, 0, 0, 0.7);
+}
+
+.search {
+	top: auto;
+	bottom: 0;
+}
+
+.items {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.item {
+	width: 215px;
+	height: 150px;
+	border: 1px solid rgba(0, 0, 0, 0.5);
+	padding: 10px;
+	margin: 10px;
+	border-radius: 15px;
 }
 </style>
 

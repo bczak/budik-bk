@@ -62,6 +62,7 @@ export default {
 				console.log(user)
 			} else {
 				// sign out
+				console.log('sign out')
 				await firebase.auth().signOut()
 			}
 		}
@@ -128,7 +129,7 @@ export default {
 	font-size: 100px;
 	text-align: center;
 	width: 100%;
-	margin: 50px 0 0;
+	margin: 40px 0 0;
 	color: white
 }
 

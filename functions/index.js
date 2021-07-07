@@ -1,5 +1,6 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
+const axios = require('axios')
 const { DateTime } = require('luxon')
 
 const firebaseConfig = {
@@ -11,6 +12,10 @@ const firebaseConfig = {
 	appId: process.env.FIREBASE_APP_ID,
 	measurementId: process.env.FIREBASE_MEASUREMENT_ID
 }
+
+const client_id = process.env.CLIENT_ID
+const client_secret = process.env.CLIENT_SECRET
+
 admin.initializeApp(firebaseConfig)
 
 function parseRepeat(repeat) {
@@ -40,6 +45,23 @@ exports.processAlarm = functions.firestore.document('alarms/{alarmId}').onWrite(
 	} else {
 		await removeNotification(context.params.alarmId)
 	}
+})
+
+exports.refreshToken = functions.pubsub.schedule('every 1 minutes').onRun(async () => {
+	console.log('yep')
+	let token = await admin.firestore().collection('settings').doc('google').get()
+	if (!token.exists) return
+	token = token.data()
+	token = token.refreshToken
+	let result = await axios.post('https://oauth2.googleapis.com/token', {
+		client_id,
+		client_secret,
+		grant_type: 'refresh_token',
+		refresh_token: token
+	})
+	token = result.data().access_token
+	await admin.firestore().collection('settings').doc('google').set({ accessToken: token })
+	return null
 })
 
 async function removeNotification(alarmId) {
@@ -84,7 +106,7 @@ function getNextTimestamp(alarm) {
 		now = now.set({ hour: nextTime.split(':')[0], minute: nextTime.split(':')[1], second: 0, millisecond: 0 })
 		times.push(now.plus({ day: i }))
 	}
-	return [...(new Set(times.map(e => e.toISO())))];
+	return [...(new Set(times.map(e => e.toISO())))]
 }
 
 /**
