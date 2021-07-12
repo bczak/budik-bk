@@ -107,6 +107,7 @@ export default {
 	text-align: center;
 	height: 100%;
 	font-size: 9em;
+	margin-top: -10px;
 	padding: 0 20px;
 	width: 100%;
 	transition: all .3s;
