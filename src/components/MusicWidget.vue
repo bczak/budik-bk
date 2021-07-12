@@ -2,7 +2,7 @@
 	<div class="widget music" v-bind:class="{fullscreen: isFullscreen}" @click="openFull">
 		<q-icon v-if="isFullscreen" @click="closeFull" class="close" name="close" />
 		<q-icon v-if="isFullscreen" @click="search" class="search" name="search" />
-		<Player ref="player" class="player" key="player" :class="{hidden: !isFullscreen}" />
+		<Player ref="player" class="player" key="player" :class="{fullplayer: isFullscreen}" />
 		<div v-if="!isFullscreen">
 			<q-icon name="audiotrack" class="music-icon" />
 		</div>
@@ -57,6 +57,10 @@ export default {
 </script>
 
 <style>
+
+.nonvisible {
+	display: none;
+}
 
 .widget.music {
 	background-color: #34A853;
