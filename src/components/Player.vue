@@ -1,5 +1,6 @@
 <template>
 	<div id="player" class="" v-if="video.id">
+		<youtube :video-id="video.id" class="hidden" @ready="ready" />
 		<div class="control" v-if="isReady">
 			<q-icon name="skip_previous" @click="previous" color="white" class="icon icon-previous" />
 			<q-icon @click="play" :name="playing ? 'pause' : 'play_arrow'" color="white" class="icon icon-play" />
@@ -10,7 +11,6 @@
 			</div>
 			<q-icon :name="repeat !== 1 ? 'repeat' : 'repeat_one'" @click="handleRepeat" :color="repeat === 0 ? 'grey' : 'white'" class="icon icon-next" />
 		</div>
-		<youtube :video-id="video.id" class="hidden" @ready="ready" />
 	</div>
 </template>
 
@@ -101,12 +101,12 @@ export default {
 .label-box {
 	width: 350px;
 	overflow: hidden;
-	margin-left: 20px;
+	margin: 20px
 }
 
 .label {
 	color: #cee;
-	font-size: 45px;
+	font-size: 20px;
 	word-wrap: break-word;
 	white-space: nowrap;
 	overflow: hidden;

@@ -25,19 +25,16 @@ export default {
 	computed: {
 		isFullscreen() {
 			return this.fullscreen === 'alarm'
-		},
-		nextTime() {
-			let dayOfWeek = DateTime.local().weekday - 1
-			return this.alarms.filter(al => al.status && al.parsedRepeat[dayOfWeek] === '1').map(al => al.time).sort()[0]
 		}
 	},
 	props: {
-		fullscreen: String
+		fullscreen: String,
+		nextTime: String
 	},
 	data: () => ({
 		alarms: [],
 		listeners: [],
-		saved: null
+		saved: null,
 	}),
 	mounted() {
 		this.listeners.push(subscribeForAlarms((data) => this.update(data)))

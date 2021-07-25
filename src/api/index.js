@@ -7,6 +7,17 @@ export function subscribeForAlarms(callback) {
 		.onSnapshot((data) => callback(data))
 }
 
+export function subscribeForEvents(callback) {
+	return firebase.firestore()
+		.collection('events')
+		.onSnapshot((data) => callback(data))
+}
+export function subscribeForNext(callback) {
+	return firebase.firestore()
+		.collection('next')
+		.onSnapshot((data) => callback(data))
+}
+
 export async function setAlarm(id, status = true) {
 	await firebase.firestore().collection('alarms').doc(id).update({ status: status })
 }
@@ -26,6 +37,11 @@ export async function createAlarm(alarm) {
 	if (!alarm.time) return
 	delete alarm.id
 	await firebase.firestore().collection('alarms').add(alarm)
+}
+
+export async function createEvent(event) {
+	delete event.id
+	await firebase.firestore().collection('events').add(event)
 }
 
 /**
@@ -64,4 +80,21 @@ export async function fetchVideos(pageToken = null) {
 		console.log(JSON.stringify(e.response.data))
 		return null
 	}
+}
+
+export async function like(id) {
+	await firebase.firestore().collection('likes').doc(id).set({})
+}
+
+export async function dislike(id) {
+	await firebase.firestore().collection('likes').doc(id).delete()
+}
+
+export async function getLikes() {
+	let result = await firebase.firestore().collection('likes').get()
+	return result.docs.map(e => e.id)
+}
+
+export async function updateEvent(event) {
+	await  firebase.firestore().collection('events').doc(event.id).update(event)
 }

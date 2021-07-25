@@ -36,7 +36,7 @@ export default {
 	}),
 	async mounted() {
 		firebase.firestore().collection('settings').doc('google').onSnapshot((setting) => {
-			if(setting.exists) {
+			if (setting.exists) {
 				let data = setting.data()
 				this.user = data.user
 			}
@@ -64,6 +64,7 @@ export default {
 				// sign out
 				console.log('sign out')
 				await firebase.auth().signOut()
+				this.user = null
 			}
 		}
 	}

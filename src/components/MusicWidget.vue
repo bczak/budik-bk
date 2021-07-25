@@ -1,24 +1,25 @@
 <template>
-	<div class="widget music" v-bind:class="{fullscreen: isFullscreen}" @click="openFull">
-		<q-icon v-if="isFullscreen" @click="closeFull" class="close" name="close" />
-		<q-icon v-if="isFullscreen" @click="search" class="search" name="search" />
-		<Player ref="player" class="player" key="player" :class="{fullplayer: isFullscreen}" />
-		<div v-if="!isFullscreen">
-			<q-icon name="audiotrack" class="music-icon" />
+	<div class="widget music" v-bind:class="{fullscreen: isFullscreen}">
+		<div v-if="isFullscreen">
+			<q-icon @click="closeFull" class="close" name="close" />
+			<q-icon @click="search" class="search" name="search" />
+			<div class="items">
+				<Video @play="play" @like="like" @dislike="dislike" v-for="video in videos" :key="video.id" :video="video" />
+				<div class="item-next item" v-if="pageToken">Next</div>
+			</div>
 		</div>
-		<div v-else class="items">
-			<Video @play="play" v-for="video in videos" :key="video.id" :video="video" />
+		<div v-if="!isFullscreen">
+			<q-icon name="audiotrack" class="music-icon" @click="openFull" />
 		</div>
 	</div>
 </template>
 
 <script>
-import { fetchVideos } from '../api'
+import { dislike, fetchVideos, getLikes, like } from '../api'
 import Video from './Video'
-import Player from './Player'
 
 export default {
-	components: { Video, Player },
+	components: { Video },
 	name: 'MusicWidget',
 	computed: {
 		isFullscreen() {
@@ -30,8 +31,15 @@ export default {
 	},
 	data: () => ({
 		videos: [],
-		pageToken: null
+		pageToken: null,
+		likes: [],
+		player: {
+			video: null
+		}
 	}),
+	async mounted() {
+		this.likes = await getLikes()
+	},
 	methods: {
 		async openFull(e) {
 			if (!e.target.className.split(' ').includes('close')) {
@@ -39,8 +47,12 @@ export default {
 				this.$emit('fullscreen', 'music')
 				let result = await fetchVideos(null)
 				if (result === null) return
+				console.log(result)
 				this.pageToken = result.nextPageToken || null
-				this.videos = result.items
+				this.videos = result.items.map(e => {
+					e.liked = this.likes.includes(e.id)
+					return e
+				})
 			}
 		},
 		closeFull() {
@@ -51,16 +63,23 @@ export default {
 		},
 		play(video) {
 			this.$refs.player.load(video)
+		},
+		async like(video) {
+			await like(video.id)
+			this.videos = this.videos.map(e => e.id === video.id ? { ...e, liked: true } : e)
+			this.likes.push(video.id)
+		},
+		async dislike(video) {
+			await dislike(video.id)
+			this.videos = this.videos.map(e => e.id === video.id ? { ...e, liked: false } : e)
+			this.likes = this.likes.filter(e => e !== video.id)
+			
 		}
 	}
 }
 </script>
 
 <style>
-
-.nonvisible {
-	display: none;
-}
 
 .widget.music {
 	background-color: #34A853;
@@ -90,7 +109,7 @@ export default {
 .music-icon {
 	color: #fff;
 	font-size: 100px !important;
-	margin: 30px;
+	padding: 30px;
 	transition: all .3s;
 }
 
