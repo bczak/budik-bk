@@ -77,7 +77,6 @@ export async function fetchVideos(pageToken = null) {
 		})
 		return result.data
 	} catch (e) {
-		console.log(JSON.stringify(e.response.data))
 		return null
 	}
 }
