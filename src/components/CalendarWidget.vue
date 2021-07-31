@@ -1,9 +1,14 @@
 <template>
-	<div class="widget calendar" ref="events" v-bind:class="{fullscreen: isFullscreen}" @click="openFull">
-		<q-icon v-if="isFullscreen" @click="closeFull" class="close" name="close" />
-		<q-icon v-if="isFullscreen" @click="addEvent" class="add" name="add_circle_outline" />
-		<div class="events">
-			<Event :fullscreen="isFullscreen" v-for="event in slicedEvents" :key="event.id" :event="event" />
+	<div class="widget calendar" ref="events" v-bind:class="{fullscreen: isFullscreen}" >
+		<div v-if="isFullscreen">
+			<q-icon @click="closeFull" class="close" name="close" />
+			<q-icon @click="addEvent" class="add" name="add_circle_outline" />
+			<div class="events">
+				<Event :fullscreen="isFullscreen" v-for="event in slicedEvents" :key="event.id" :event="event" />
+			</div>
+		</div>
+		<div v-if="!isFullscreen">
+			<q-icon name="event" class="event-icon" @click="openFull"/>
 		</div>
 	</div>
 </template>
@@ -41,6 +46,8 @@ export default {
 			})).filter(e => (DateTime.fromISO(e.start) <= DateTime.now() && DateTime.fromISO(e.end) >= DateTime.now()))
 		},
 		openFull(e) {
+			console.log('open')
+			
 			if (!e.target.className.split(' ').includes('close')) {
 				this.$emit('fullscreen', 'calendar')
 			}
@@ -54,8 +61,8 @@ export default {
 			})
 		},
 		closeFull() {
-			this.$refs['events'].scrollTo(0, 0)
-			this.$emit('fullscreen', null)
+			console.log('close')
+			this.$emit('fullscreen', null);
 		}
 	}
 }
@@ -84,11 +91,19 @@ export default {
 }
 
 .events {
-	padding: 10px;
-}
-
-.fullscreen .events {
 	padding: 20px;
 	margin-right: 70px;
+	display: flex;
+	flex-direction: column;
+	overflow-y: scroll;
+	height: 480px;
+}
+
+.event-icon {
+	color: white;
+	font-size: 100px !important;
+	position: absolute;
+	top: 45px;
+	left: 45px
 }
 </style>

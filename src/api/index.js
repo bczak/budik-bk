@@ -44,6 +44,22 @@ export async function createEvent(event) {
 	await firebase.firestore().collection('events').add(event)
 }
 
+export async function subscribeForVolume(callback) {
+	return firebase.firestore()
+		.collection('settings')
+		.doc('volume')
+		.onSnapshot((data) => callback(data))
+}
+
+export async function updateVolume(volume) {
+	await firebase.firestore().collection('settings').doc('volume').update({value: volume})
+}
+
+export async function deleteEvent(id) {
+	await firebase.firestore().collection('events').doc(id).delete()
+
+}
+
 /**
  * Return refresh token from firestore
  * @returns {Promise<string|null>}

@@ -7,7 +7,6 @@
 		</div>
 		<div v-if="!isFullscreen">
 			<q-icon name="alarm" class="alarm-icon" />
-			<q-item-label class="next-time">{{ nextTime || '' }}</q-item-label>
 		</div>
 	</div>
 </template>
@@ -155,14 +154,8 @@ export default {
 .alarm-icon {
 	color: white;
 	font-size: 100px;
-	margin: 25px 35px 0;
+	margin: 35px 35px 0;
 	transition: all .3s;
 }
 
-.next-time {
-	color: white;
-	font-size: 35px;
-	text-align: center;
-	
-}
 </style>

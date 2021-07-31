@@ -1,6 +1,5 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
-const axios = require('axios')
 const { DateTime } = require('luxon')
 
 const firebaseConfig = {
@@ -13,62 +12,51 @@ const firebaseConfig = {
 	measurementId: process.env.FIREBASE_MEASUREMENT_ID
 }
 
-const client_id = process.env.CLIENT_ID
-const client_secret = process.env.CLIENT_SECRET
-
 admin.initializeApp(firebaseConfig)
 
-function parseRepeat(repeat) {
-	if (repeat === 0) return '0000000'
-	return (repeat >>> 0)
-		.toString(2)
-		.padStart(7, '0')
-		.split('')
-		.reverse()
-		.join('')
+exports.processAlarmCreate = functions.firestore.document('alarms/{alarmId}').onWrite(processAlarm)
+exports.processEventCreate = functions.firestore.document('events/{eventId}').onWrite(async (snap, context) => {
+	console.log(context)
+})
+/**
+ *
+ * @param {Change<DocumentSnapshot>} snap
+ * @param {EventContext} context
+ * @returns {Promise<void>}
+ */
+async function processAlarmDelete(snap, context) {
+	await removeNotification(context.params.alarmId)
 }
 
-exports.processAlarm = functions.firestore.document('alarms/{alarmId}').onWrite(async (snap, context) => {
-	if (snap.after.exists) {
+/**
+ *
+ * @param {Change<DocumentSnapshot>} snap
+ * @param {EventContext} context
+ * @returns {Promise<void>}
+ */
+async function processAlarm(snap, context) {
+	console.log(snap)
+	if (snap.after && snap.after.exists) {
 		let alarm = snap.after.data()
 		if (!alarm.status) {
-			await removeNotification(snap.after.id)
-			return
+			return removeNotification(snap.after.id)
 		}
 		let times = getNextTimestamp(snap.after.data())
+		console.log(times)
 		await admin
 			.firestore()
 			.collection('next')
-			.doc(context.params.alarmId)
+			.doc('alarm_' + context.params.alarmId)
 			.set({ type: 'alarm', times: [...times] })
 		console.log(times)
-	} else {
-		await removeNotification(context.params.alarmId)
 	}
-})
-
-exports.refreshToken = functions.pubsub.schedule('every 1 minutes').onRun(async () => {
-	console.log('yep')
-	let token = await admin.firestore().collection('settings').doc('google').get()
-	if (!token.exists) return
-	token = token.data()
-	token = token.refreshToken
-	let result = await axios.post('https://oauth2.googleapis.com/token', {
-		client_id,
-		client_secret,
-		grant_type: 'refresh_token',
-		refresh_token: token
-	})
-	token = result.data().access_token
-	await admin.firestore().collection('settings').doc('google').set({ accessToken: token })
-	return null
-})
+}
 
 async function removeNotification(alarmId) {
 	await admin
 		.firestore()
 		.collection('next')
-		.doc(alarmId)
+		.doc('alarm_' + alarmId)
 		.delete()
 }
 
@@ -86,7 +74,7 @@ function getNextTimestamp(alarm) {
 			second: 0,
 			millisecond: 0
 		})
-		if (now.toFormat('T') > nextTime) {
+		if (now.toFormat('T') < nextTime) {
 			times.push(next)
 		} else {
 			times.push(next.plus({ day: 1 }))
@@ -117,4 +105,16 @@ function getNextTimestamp(alarm) {
  */
 function getNextDayOfWeek(repeat, now) {
 	return repeat.substr(now.weekday - 1, 7 - now.weekday + 1) + repeat.substr(0, now.weekday - 1)
+}
+
+
+
+function parseRepeat(repeat) {
+	if (repeat === 0) return '0000000'
+	return (repeat >>> 0)
+		.toString(2)
+		.padStart(7, '0')
+		.split('')
+		.reverse()
+		.join('')
 }

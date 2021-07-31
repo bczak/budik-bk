@@ -7,7 +7,7 @@
 				<div class="event-duration">{{ startFull }} - {{ endFull }}</div>
 			</div>
 			<div class="event-actions">
-				<q-icon name="delete" class="event-action event-action-delete" color="red" />
+				<q-icon name="delete" @click="deleteEvent" class="event-action event-action-delete" color="red" />
 				<q-icon name="notifications_active" class="event-action event-action-reminder" color="green" />
 			</div>
 			<ColorPicker :selected="event.color" v-if="colorModal" @change="changeColor" />
@@ -25,7 +25,7 @@
 <script>
 import { DateTime } from 'luxon'
 import ColorPicker from './ColorPicker'
-import { updateEvent } from '../api'
+import { deleteEvent, updateEvent } from '../api'
 
 export default {
 	name: 'Event',
@@ -66,7 +66,10 @@ export default {
 		},
 		changeColor(color) {
 			this.colorModal = false
-			updateEvent({...this.event, color: color})
+			updateEvent({ ...this.event, color: color })
+		},
+		deleteEvent() {
+			deleteEvent(this.event.id)
 		}
 	}
 }
@@ -76,6 +79,7 @@ export default {
 
 .event {
 	margin: 0 0 18px;
+	width: 100%
 }
 
 .event-fullscreen.event {
@@ -83,6 +87,13 @@ export default {
 	border-radius: 15px;
 	padding: 10px 10px;
 	background: rgba(0, 0, 0, 0.2);
+}
+
+.event-actions {
+	display: flex;
+	flex-direction: row;
+	width: 120px;
+	justify-content: space-between;
 }
 
 .event-action {

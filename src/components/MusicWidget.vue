@@ -113,11 +113,6 @@ export default {
 	transition: all .3s;
 }
 
-.player {
-	flex-grow: 3;
-}
-
-
 .close, .search {
 	font-size: 50px !important;
 	position: fixed !important;

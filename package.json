@@ -16,6 +16,7 @@
     "gapi": "^0.0.3",
     "googleapis": "^80.1.0",
     "luxon": "^1.27.0",
+    "onoff": "^6.0.3",
     "quasar": "^1.0.0",
     "simple-keyboard": "^3.1.35",
     "simple-keyboard-layouts": "^3.0.104",
