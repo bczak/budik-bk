@@ -124,7 +124,8 @@ export default {
 	margin: 30px;
 	top: 0;
 	right: 0;
-	color: rgba(255, 255, 255, 0.9);
+	color: rgba(255, 255, 255, 0.9) !important;
+	background-color: rgba(0,0,0,0) !important;
 }
 
 .add {

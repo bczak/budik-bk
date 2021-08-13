@@ -1,5 +1,5 @@
 <template>
-	<div class="widget calendar" ref="events" v-bind:class="{fullscreen: isFullscreen}" >
+	<div class="widget calendar" ref="events" v-bind:class="{fullscreen: isFullscreen}">
 		<div v-if="isFullscreen">
 			<q-icon @click="closeFull" class="close" name="close" />
 			<q-icon @click="addEvent" class="add" name="add_circle_outline" />
@@ -7,8 +7,8 @@
 				<Event :fullscreen="isFullscreen" v-for="event in slicedEvents" :key="event.id" :event="event" />
 			</div>
 		</div>
-		<div v-if="!isFullscreen">
-			<q-icon name="event" class="event-icon" @click="openFull"/>
+		<div v-if="!isFullscreen" @click="openFull">
+			<q-icon name="event" class="event-icon" />
 		</div>
 	</div>
 </template>
@@ -46,8 +46,6 @@ export default {
 			}))
 		},
 		openFull(e) {
-			console.log('open')
-			
 			if (!e.target.className.split(' ').includes('close')) {
 				this.$emit('fullscreen', 'calendar')
 			}
@@ -62,7 +60,7 @@ export default {
 		},
 		closeFull() {
 			console.log('close')
-			this.$emit('fullscreen', null);
+			this.$emit('fullscreen', null)
 		}
 	}
 }
@@ -72,7 +70,7 @@ export default {
 
 .widget.calendar {
 	background: #393635;
-	width: 190px;
+	width: 380px;
 	height: 180px;
 	z-index: 1;
 	top: 200px;
@@ -90,6 +88,11 @@ export default {
 	height: 460px;
 }
 
+.widget.calendar.fullscreen .close {
+	background: none;
+	color: #111 !important;
+}
+
 .events {
 	padding: 20px;
 	margin-right: 70px;
@@ -104,6 +107,8 @@ export default {
 	font-size: 100px !important;
 	position: absolute;
 	top: 45px;
-	left: 45px
+	left: 240px
 }
+
+
 </style>

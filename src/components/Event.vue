@@ -22,10 +22,10 @@
 				</div>
 			</q-dialog>
 			<q-dialog v-model="dateTimeModalStart" full-height full-width persistent>
-				<DateTimeSelector :datetime="datetimeStart" />
+				<DateTimeSelector :datetime="datetimeStart" @cancel="() => this.dateTimeModalStart = false" label="Start Date and Time" @update="(e) => updateDateTime('start', e)" />
 			</q-dialog>
-			<q-dialog v-model="dateTimeModalStart" full-height full-width persistent>
-				<DateTimeSelector :datetime="datetimeEnd" />
+			<q-dialog v-model="dateTimeModalEnd" full-height full-width persistent>
+				<DateTimeSelector :datetime="datetimeEnd" @cancel="() => this.dateTimeModalEnd = false" label="End Date and Time" @update="(e) => updateDateTime('end', e)" />
 			</q-dialog>
 		</div>
 	</div>
@@ -61,10 +61,10 @@ export default {
 	},
 	computed: {
 		datetimeStart() {
-			return DateTime.fromISO(this.event.start || new Date().toISOString()).toFormat('YYYY-MM-DD HH:mm')
+			return DateTime.fromISO(this.event.start || new Date().toISOString()).toFormat('yyyy-MM-dd HH:mm')
 		},
 		datetimeEnd() {
-			return DateTime.fromISO(this.event.end || new Date().toISOString()).toFormat('YYYY-MM-DD HH:mm')
+			return DateTime.fromISO(this.event.end || new Date().toISOString()).toFormat('yyyy-MM-dd HH:mm')
 		},
 		startFull() {
 			return DateTime.fromISO(this.event.start || new Date().toISOString()).toFormat('LLL d, T')
@@ -94,6 +94,13 @@ export default {
 		resetTitle() {
 			this.titleModal = false
 			this.editTitle = this.event.title
+		},
+		updateDateTime(type, time) {
+			let parsed = DateTime.fromFormat(time, 'yyyy-MM-dd HH:mm').toISO()
+			this.event[type] = parsed
+			updateEvent({ ...this.event, [type]: parsed })
+			this.dateTimeModalStart = false;
+			this.dateTimeModalEnd = false;
 		},
 		updateTitle() {
 			updateEvent({ ...this.event, title: this.editTitle })

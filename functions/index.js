@@ -18,15 +18,6 @@ exports.processAlarmCreate = functions.firestore.document('alarms/{alarmId}').on
 exports.processEventCreate = functions.firestore.document('events/{eventId}').onWrite(async (snap, context) => {
 	console.log(context)
 })
-/**
- *
- * @param {Change<DocumentSnapshot>} snap
- * @param {EventContext} context
- * @returns {Promise<void>}
- */
-async function processAlarmDelete(snap, context) {
-	await removeNotification(context.params.alarmId)
-}
 
 /**
  *
@@ -35,20 +26,17 @@ async function processAlarmDelete(snap, context) {
  * @returns {Promise<void>}
  */
 async function processAlarm(snap, context) {
-	console.log(snap)
 	if (snap.after && snap.after.exists) {
 		let alarm = snap.after.data()
 		if (!alarm.status) {
 			return removeNotification(snap.after.id)
 		}
 		let times = getNextTimestamp(snap.after.data())
-		console.log(times)
 		await admin
 			.firestore()
 			.collection('next')
 			.doc('alarm_' + context.params.alarmId)
 			.set({ type: 'alarm', times: [...times] })
-		console.log(times)
 	}
 }
 
@@ -74,7 +62,7 @@ function getNextTimestamp(alarm) {
 			second: 0,
 			millisecond: 0
 		})
-		if (now.toFormat('T') < nextTime) {
+		if (now.toFormat('T') <= nextTime) {
 			times.push(next)
 		} else {
 			times.push(next.plus({ day: 1 }))
@@ -87,7 +75,7 @@ function getNextTimestamp(alarm) {
 		if (day === 0) continue
 		if (i === 0) {
 			// if today before now then move to next week
-			if (nextTime < now.toFormat('T')) {
+			if (nextTime <= now.toFormat('T')) {
 				now = now.plus({ week: 1 })
 			}
 		}
@@ -106,8 +94,6 @@ function getNextTimestamp(alarm) {
 function getNextDayOfWeek(repeat, now) {
 	return repeat.substr(now.weekday - 1, 7 - now.weekday + 1) + repeat.substr(0, now.weekday - 1)
 }
-
-
 
 function parseRepeat(repeat) {
 	if (repeat === 0) return '0000000'
