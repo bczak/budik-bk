@@ -35,7 +35,10 @@ export default {
 		timeout: null
 	}),
 	mounted() {
-		subscribeForVolume((e) => this.volume = e.exists ? e.data().value : 60)
+		subscribeForVolume((e) => {
+			this.showSlider();
+			this.volume = e.exists ? e.data().value : 60
+		})
 	},
 	methods: {
 		showSlider() {

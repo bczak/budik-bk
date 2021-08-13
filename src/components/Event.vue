@@ -3,21 +3,30 @@
 		<div v-if="fullscreen" class="event-wrapper event-fullscreen">
 			<div class="event-color" :class="`color-${event.color}`" @click="selectColor"></div>
 			<div class="event-content">
-				<div class="event-title">{{ event.title || 'Event' }}</div>
-				<div class="event-duration">{{ startFull }} - {{ endFull }}</div>
+				<div class="event-title" @click="changeTitle">{{ event.title || 'Event' }}</div>
+				<div class="event-duration" @click="showStartModal">Start: {{ startFull }}</div>
+				<div class="event-duration" @click="showEndModal">End: {{ endFull }}</div>
 			</div>
 			<div class="event-actions">
 				<q-icon name="delete" @click="deleteEvent" class="event-action event-action-delete" color="red" />
-				<q-icon name="notifications_active" class="event-action event-action-reminder" color="green" />
 			</div>
 			<ColorPicker :selected="event.color" v-if="colorModal" @change="changeColor" />
-		</div>
-		<div v-else class="event-wrapper">
-			<div class="event-color" :class="`color-${event.color}`"></div>
-			<div class="event-content">
-				<div class="event-title">{{ event.title || 'Event' }}</div>
-				<div class="event-duration">{{ startTime }} - {{ long ? endRelative : endTime }}</div>
-			</div>
+			<q-dialog v-model="titleModal" full-height full-width persistent>
+				<div class="keyboard">
+					<q-input class="label-input" outlined v-model="editTitle" type="text" placeholder="Text input" @focus="show" />
+					<div class="buttons">
+						<q-btn class="button cancel" @click="resetTitle" rounded>Cancel</q-btn>
+						<q-btn class="button save" @click="updateTitle" rounded>Save</q-btn>
+					</div>
+					<SimpleKeyboard @onChange="onChangeTitle" @onKeyPress="onKeyPress" :input="editTitle" />
+				</div>
+			</q-dialog>
+			<q-dialog v-model="dateTimeModalStart" full-height full-width persistent>
+				<DateTimeSelector :datetime="datetimeStart" />
+			</q-dialog>
+			<q-dialog v-model="dateTimeModalStart" full-height full-width persistent>
+				<DateTimeSelector :datetime="datetimeEnd" />
+			</q-dialog>
 		</div>
 	</div>
 </template>
@@ -26,28 +35,36 @@
 import { DateTime } from 'luxon'
 import ColorPicker from './ColorPicker'
 import { deleteEvent, updateEvent } from '../api'
+import SimpleKeyboard from './SimpleKeyboard'
+import DateTimeSelector from './DateTimeSelector'
 
 export default {
 	name: 'Event',
-	components: { ColorPicker },
+	components: { DateTimeSelector, ColorPicker, SimpleKeyboard },
 	props: {
 		fullscreen: Boolean,
 		event: Object
 	},
 	data() {
 		return {
-			colorModal: false
+			colorModal: false,
+			keyboard: null,
+			titleModal: false,
+			keyboardClass: 'simple-keyboard',
+			editTitle: null,
+			dateTimeModalStart: false,
+			dateTimeModalEnd: false
 		}
 	},
+	mounted() {
+		this.editTitle = this.event.title
+	},
 	computed: {
-		startTime() {
-			return DateTime.fromISO(this.event.start || new Date().toISOString()).toFormat('T')
+		datetimeStart() {
+			return DateTime.fromISO(this.event.start || new Date().toISOString()).toFormat('YYYY-MM-DD HH:mm')
 		},
-		endTime() {
-			return DateTime.fromISO(this.event.end || new Date().toISOString()).toFormat('T')
-		},
-		endRelative() {
-			return DateTime.fromISO(this.event.end || new Date().toISOString()).toRelative()
+		datetimeEnd() {
+			return DateTime.fromISO(this.event.end || new Date().toISOString()).toFormat('YYYY-MM-DD HH:mm')
 		},
 		startFull() {
 			return DateTime.fromISO(this.event.start || new Date().toISOString()).toFormat('LLL d, T')
@@ -61,6 +78,34 @@ export default {
 		}
 	},
 	methods: {
+		showEndModal() {
+			this.dateTimeModalEnd = true
+		},
+		showStartModal() {
+			console.log('here')
+			this.dateTimeModalStart = true
+		},
+		changeTitle() {
+			this.titleModal = true
+		},
+		onChangeTitle(title) {
+			this.editTitle = title
+		},
+		resetTitle() {
+			this.titleModal = false
+			this.editTitle = this.event.title
+		},
+		updateTitle() {
+			updateEvent({ ...this.event, title: this.editTitle })
+			this.event.title = this.editTitle
+			this.titleModal = false
+		},
+		show(e) {
+			this.input = e.target
+		},
+		onKeyPress() {
+		
+		},
 		selectColor() {
 			this.colorModal = true
 		},
@@ -93,11 +138,16 @@ export default {
 	display: flex;
 	flex-direction: row;
 	width: 120px;
-	justify-content: space-between;
+	justify-content: flex-end;
 }
 
 .event-action {
 	font-size: 50px;
+}
+
+.keyboard {
+	background: white;
+	border-radius: 15px;
 }
 
 .event-wrapper {
@@ -114,8 +164,8 @@ export default {
 }
 
 .event-fullscreen .event-color {
-	width: 60px;
-	height: 60px;
+	width: 90px;
+	height: 90px;
 	border-radius: 7px;
 }
 
@@ -141,7 +191,25 @@ export default {
 }
 
 .event-duration {
-	color: #ccc;
+	color: #e8e8e8;
 }
 
+.label-input {
+	margin: 10px;
+	background: white;
+	overflow: hidden;
+	border-radius: 15px;
+	font-size: 22px;
+}
+
+.simple-keyboard {
+	bottom: 10px;
+	margin: 5px;
+	background: #0d1921;
+	width: calc(100% - 10px);
+}
+
+.keyboard {
+	background: #0d1921;
+}
 </style>

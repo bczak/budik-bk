@@ -9,7 +9,7 @@ export function subscribeForAlarms(callback) {
 
 export function subscribeForEvents(callback) {
 	return firebase.firestore()
-		.collection('events')
+		.collection('events').orderBy('start')
 		.onSnapshot((data) => callback(data))
 }
 export function subscribeForNext(callback) {
@@ -52,12 +52,11 @@ export async function subscribeForVolume(callback) {
 }
 
 export async function updateVolume(volume) {
-	await firebase.firestore().collection('settings').doc('volume').update({value: volume})
+	await firebase.firestore().collection('settings').doc('volume').set({value: volume})
 }
 
 export async function deleteEvent(id) {
 	await firebase.firestore().collection('events').doc(id).delete()
-
 }
 
 /**

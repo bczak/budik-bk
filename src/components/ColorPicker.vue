@@ -1,5 +1,5 @@
 <template>
-	<q-dialog :value="true">
+	<q-dialog :value="true" persistent>
 		<q-card dark>
 			<div class="colors">
 				<div class="color" v-for="color in colors" :key="color" @click="() => $emit('change', color)" :class="`color-${color}`">

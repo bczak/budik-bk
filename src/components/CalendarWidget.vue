@@ -43,7 +43,7 @@ export default {
 			this.events = data.docs.map(e => ({
 				...e.data(),
 				id: e.id
-			})).filter(e => (DateTime.fromISO(e.start) <= DateTime.now() && DateTime.fromISO(e.end) >= DateTime.now()))
+			}))
 		},
 		openFull(e) {
 			console.log('open')
