@@ -21,7 +21,6 @@
           <SimpleKeyboard @onChange="onChange" @onKeyPress="onKeyPress" :input="editAlarm.label" />
         </div>
       </q-dialog>
-      <q-icon name="audiotrack" @click="setSound" class="sound" />
       <q-icon name="delete" @click="deleteAlarm()" color="red" class="delete" />
       <q-dialog v-model="timeModal" full-height>
         <q-time :value="editAlarm.time" @input="(value) => editAlarm.time = value" format24h>

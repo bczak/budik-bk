@@ -83,7 +83,7 @@ export default {
 		subscribeForNext(e => {
 			this.alarms = []
 			let alarms = e.docs.map(e => ({ id: e.id, data: e.data() })).map(e => {
-				return e.data.times.map(t => ({ id: e.id, time: t }))
+				return (e.data.times || []).map(t => ({ id: e.id, time: t }))
 			})
 			alarms = [].concat.apply([], alarms).sort((a, b) => a.time > b.time ? 1 : -1)
 			alarms.forEach(e => this.alarms.push(e))
@@ -108,18 +108,21 @@ export default {
 		},
 		async checkAlarm() {
 			if (this.alarms.length === 0) return
-			let alarm = this.alarms[0]
-			let now = DateTime.now()
-			let time = DateTime.fromISO(alarm.time)
-			if (now > time) {
-				this.$emit('fullscreen', 'panel')
-				this.sound.play()
-				if (alarm.id.includes('alarm')) {
-					await updateNextAlarm(alarm.id.split('_')[1])
-				} else {
-					await updateNextEvent(alarm.id.split('_')[1])
+			for(let alarm of this.alarms) {
+				let now = DateTime.now()
+				let time = DateTime.fromISO(alarm.time)
+				console.log(alarm.time);
+				if (now.tz > time.tz) {
+					console.log('alarm');
+					this.$emit('fullscreen', 'panel')
+					this.sound.play()
+					if (alarm.id.includes('alarm')) {
+						await updateNextAlarm(alarm.id.split('_')[1])
+					} else {
+						await updateNextEvent(alarm.id.split('_')[1])
+					}
+					this.time = time.toFormat('T')
 				}
-				this.time = time.toFormat('T')
 			}
 		},
 		updateVolume(val) {
