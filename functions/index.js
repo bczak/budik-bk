@@ -1,6 +1,13 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 const { DateTime } = require('luxon')
+var Gpio = require('onoff').Gpio; //include onoff to interact with the GPIO
+
+const nodaryEncoder = require('nodary-encoder');
+const myEncoder = nodaryEncoder(14, 15); // Using GPIO17 & GPIO18
+
+
+
 
 const firebaseConfig = {
 	apiKey: process.env.FIREBASE_API_KEY,
@@ -104,3 +111,29 @@ function parseRepeat(repeat) {
 		.reverse()
 		.join('')
 }
+
+let lastValue = 0;
+function getLastValue() {
+	return lastValue
+}
+function setLastValue(value) {
+	lastValue = value
+}
+const pushButton = new Gpio(18, 'in', 'both');
+let buttonPushed = 0
+pushButton.watch(function (err, value) {
+	if(value === 1) {
+		buttonPushed = Date.now()
+	} else {
+		if(Date.now() - buttonPushed > 100) {
+			console.log('button');
+		}
+		buttonPushed = Date.now()
+	}
+});
+myEncoder.on('rotation', (direction, value) => {
+	if (getLastValue() != value) {
+		console.log('Value is', value);
+	}
+	setLastValue(value)
+});
