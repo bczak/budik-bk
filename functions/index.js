@@ -1,13 +1,10 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 const { DateTime } = require('luxon')
-var Gpio = require('onoff').Gpio; //include onoff to interact with the GPIO
+const Gpio = require('onoff').Gpio //include onoff to interact with the GPIO
 
-const nodaryEncoder = require('nodary-encoder');
-const myEncoder = nodaryEncoder(14, 15); // Using GPIO17 & GPIO18
-
-
-
+const nodaryEncoder = require('nodary-encoder')
+const myEncoder = nodaryEncoder(14, 15) // Using GPIO17 & GPIO18
 
 const firebaseConfig = {
 	apiKey: process.env.FIREBASE_API_KEY,
@@ -112,28 +109,39 @@ function parseRepeat(repeat) {
 		.join('')
 }
 
-let lastValue = 0;
+let lastValue = 0
+
 function getLastValue() {
 	return lastValue
 }
+
 function setLastValue(value) {
 	lastValue = value
 }
-const pushButton = new Gpio(18, 'in', 'both');
+
+const pushButton = new Gpio(18, 'in', 'both')
 let buttonPushed = 0
-pushButton.watch(function (err, value) {
-	if(value === 1) {
+pushButton.watch(async function (err, value) {
+	if (value === 1) {
 		buttonPushed = Date.now()
 	} else {
-		if(Date.now() - buttonPushed > 100) {
-			console.log('button');
+		if (Date.now() - buttonPushed > 100) {
+			console.log('button')
+			await admin.firestore().collection('settings').doc('button').set({ updated: Date.now() }, { merge: true })
 		}
 		buttonPushed = Date.now()
 	}
-});
-myEncoder.on('rotation', (direction, value) => {
-	if (getLastValue() != value) {
-		console.log('Value is', value);
+})
+myEncoder.on('rotation', async (direction, value) => {
+	if (getLastValue() !== value) {
+		let { mode } = (await admin.firestore().collection('settings').doc('button').get()).data() || { mode: 'volume' }
+		let dir = direction === 'R'
+		if (mode === 'led') {
+			await admin.firestore().collection('settings').doc('led').set({ value: admin.firestore.FieldValue.increment(dir ? 2 : -2) }, { merge: true })
+		} else {
+			await admin.firestore().collection('settings').doc('volume').set({ value: admin.firestore.FieldValue.increment(dir ? 2 : -2) }, { merge: true })
+		}
+		console.log(direction, value)
 	}
 	setLastValue(value)
-});
+})
