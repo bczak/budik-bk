@@ -2,9 +2,9 @@ const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 const { DateTime } = require('luxon')
 const Gpio = require('onoff').Gpio //include onoff to interact with the GPIO
-
+const ws281x = require('rpi-ws281x')
 const nodaryEncoder = require('nodary-encoder')
-const myEncoder = nodaryEncoder(14, 15) // Using GPIO17 & GPIO18
+const myEncoder = nodaryEncoder(14,15) // Using GPIO17 & GPIO18
 
 const firebaseConfig = {
 	apiKey: process.env.FIREBASE_API_KEY,
@@ -15,6 +15,8 @@ const firebaseConfig = {
 	appId: process.env.FIREBASE_APP_ID,
 	measurementId: process.env.FIREBASE_MEASUREMENT_ID
 }
+
+ws281x.configure({ leds: 8, gpio: 18 })
 
 admin.initializeApp(firebaseConfig)
 
@@ -119,7 +121,7 @@ function setLastValue(value) {
 	lastValue = value
 }
 
-const pushButton = new Gpio(18, 'in', 'both')
+const pushButton = new Gpio(23, 'in', 'both')
 let buttonPushed = 0
 pushButton.watch(async function (err, value) {
 	if (value === 1) {
@@ -132,16 +134,60 @@ pushButton.watch(async function (err, value) {
 		buttonPushed = Date.now()
 	}
 })
+let led = 0;
+let volume = 60;
+
+function getLed() {
+	return led
+}
+function setLed(l) {
+	led = l
+} 
+function getVolume() {
+	return volume
+}
+function setVolume(l) {
+	volume = l
+} 
 myEncoder.on('rotation', async (direction, value) => {
 	if (getLastValue() !== value) {
 		let { mode } = (await admin.firestore().collection('settings').doc('button').get()).data() || { mode: 'volume' }
 		let dir = direction === 'R'
 		if (mode === 'led') {
-			await admin.firestore().collection('settings').doc('led').set({ value: admin.firestore.FieldValue.increment(dir ? 2 : -2) }, { merge: true })
+			let led = getLed()
+			let pixels = new Uint32Array(8);
+			if (led > 360) {
+				led = 0
+			}
+			led += (dir ? 1 : -1) // todo
+			if(led < 0) led = 360
+			if(led > 360) led = 0
+			let hex = hsv2rgb(led, 1, 1)
+			var red = parseInt(hex[0] * 255),
+				green = parseInt(hex[1] * 255),
+				blue = parseInt(hex[2] * 255);
+			var color = (red << 16) | (green << 8) | blue;
+
+			for (var i = 0; i < 8; i++)
+				pixels[i] = color;
+			setLed(led)
+			console.log(led)
+			ws281x.render(pixels)
+			await admin.firestore().collection('settings').doc('led').set({ value: led }, { merge: true })
 		} else {
-			await admin.firestore().collection('settings').doc('volume').set({ value: admin.firestore.FieldValue.increment(dir ? 2 : -2) }, { merge: true })
+			let volume = getVolume()
+			volume += dir ? 2 : -2;
+			if(volume < 0) volume = 0;
+			if(volume > 100) volume = 100;
+			setVolume(volume)
+			await admin.firestore().collection('settings').doc('volume').set({ value: volume }, { merge: true })
 		}
-		console.log(direction, value)
 	}
 	setLastValue(value)
 })
+
+function hsv2rgb(h,s,v) 
+{                              
+  let f= (n,k=(n+h/60)%6) => v - v*s*Math.max( Math.min(k,4-k,1), 0);     
+  return [f(5),f(3),f(1)];       
+} 

@@ -17,7 +17,7 @@ const firebaseConfig = {
 }
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig)
-const server = '192.168.0.227'
+const server = '127.0.0.1'
 firebase.firestore().useEmulator(server, 8080)
 firebase.functions().useEmulator(server, 5001)
 

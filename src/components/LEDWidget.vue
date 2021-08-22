@@ -13,27 +13,34 @@
 <script>
 
 import { setButtonMode, subscribeForLEDColor } from '../api'
-
+function hsv2rgb(h,s,v) 
+{                              
+  let f= (n,k=(n+h/60)%6) => v - v*s*Math.max( Math.min(k,4-k,1), 0);     
+  return [f(5),f(3),f(1)];       
+} 
 export default {
 	components: {  },
 	name: 'ledWidget',
 	computed: {
 		isFullscreen() {
 			return this.fullscreen === 'led'
-		},
-		hexColor() {
-			return this.color.toString(16).padStart(6, '0')
 		}
 	},
 	props: {
 		fullscreen: String
 	},
 	data: () => ({
-		color: 8388608
+		color: 8388608,
+		hexColor: '#000000'
 	}),
 	mounted() {
 		subscribeForLEDColor((e) => {
 			this.color = e.exists ? e.data().value : 0
+			console.log(this.color)
+			let hex = hsv2rgb(this.color, 1,1)
+			this.hexColor = parseInt(hex[0] * 255).toString(16).padStart(2, '0') + parseInt(hex[1] * 255).toString(16).padStart(2, '0') +parseInt(hex[2] * 255).toString(16).padStart(2, '0')
+			console.log(this.hexColor)
+		
 		})
 	},
 	methods: {
