@@ -111,8 +111,10 @@ export default {
 			for(let alarm of this.alarms) {
 				let now = DateTime.now()
 				let time = DateTime.fromISO(alarm.time)
+				console.log(time.toISO());
+				console.log(now.toISO());
 				console.log(alarm.time);
-				if (now.tz > time.tz) {
+				if (now.toISO() > time.toISO()) {
 					console.log('alarm');
 					this.$emit('fullscreen', 'panel')
 					this.sound.play()

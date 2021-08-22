@@ -76,7 +76,6 @@ function getNextTimestamp(alarm) {
 	}
 
 	for (let i = 0; i < 7; i++) {
-		let now = DateTime.now().setZone('Europe/Prague')
 		let day = Number(modifiedRepeat[i])
 		if (day === 0) continue
 		if (i === 0) {
@@ -88,7 +87,7 @@ function getNextTimestamp(alarm) {
 		now = now.set({ hour: nextTime.split(':')[0], minute: nextTime.split(':')[1], second: 0, millisecond: 0 })
 		times.push(now.plus({ day: i }))
 	}
-	return [...(new Set(times.map(e => e.toISO())))]
+	return [...(new Set(times.map(e => e.setZone('Europe/Prague').toISO())))]
 }
 
 /**
