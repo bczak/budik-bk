@@ -31,7 +31,7 @@ import {
 	subscribeForNext,
 	subscribeForTemperature,
 	subscribeForVolume,
-	updateNextAlarm, updateNextEvent,
+	updateNextAlarm,
 	updateVolume
 } from '../api'
 import { DateTime } from 'luxon'
@@ -63,9 +63,9 @@ export default {
 	mounted() {
 		this.sound = new Audio(sound)
 		this.sound.addEventListener('ended', () => {
-			this.sound.currentTime = 0;
+			this.sound.currentTime = 0
 			this.sound.play()
-		}, true);
+		}, true)
 		this.sound.loop = true
 		this.sound.volume = this.volume / 100
 		
@@ -87,7 +87,6 @@ export default {
 			})
 			alarms = [].concat.apply([], alarms).sort((a, b) => a.time > b.time ? 1 : -1)
 			alarms.forEach(e => this.alarms.push(e))
-			
 		})
 	},
 	methods: {
@@ -108,21 +107,13 @@ export default {
 		},
 		async checkAlarm() {
 			if (this.alarms.length === 0) return
-			for(let alarm of this.alarms) {
+			for (let alarm of this.alarms) {
 				let now = DateTime.now()
 				let time = DateTime.fromISO(alarm.time)
-				console.log(time.toISO());
-				console.log(now.toISO());
-				console.log(alarm.time);
 				if (now.toISO() > time.toISO()) {
-					console.log('alarm');
 					this.$emit('fullscreen', 'panel')
 					this.sound.play()
-					if (alarm.id.includes('alarm')) {
-						await updateNextAlarm(alarm.id.split('_')[1])
-					} else {
-						await updateNextEvent(alarm.id.split('_')[1])
-					}
+					await updateNextAlarm(alarm.id)
 					this.time = time.toFormat('T')
 				}
 			}

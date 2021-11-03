@@ -13,7 +13,7 @@ const firebaseConfig = {
 	measurementId: process.env.VUE_APP_FIREBASE_MEASUREMENT_ID,
 	clientId: process.env.VUE_APP_FIREBASE_WEB_CLIENT_ID,
 	clientSecret: process.env.VUE_APP_FIREBASE_WEB_CLIENT_SECRET,
-	scopes: ['email', 'profile', 'https://www.googleapis.com/auth/calendar', 'https://www.googleapis.com/auth/youtube']
+	scopes: ['email', 'profile', 'https://www.googleapis.com/auth/calendar']
 }
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig)
