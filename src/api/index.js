@@ -77,6 +77,9 @@ export async function subscribeForLEDColor(callback) {
 		.doc('led')
 		.onSnapshot((data) => callback(data))
 }
+export async function setColor(color) {
+  await firebase.firestore().collection('settings').doc('led').set({ color: color })
+}
 
 export async function updateVolume(volume) {
 	await firebase.firestore().collection('settings').doc('volume').set({ value: volume })
@@ -85,11 +88,6 @@ export async function updateVolume(volume) {
 export async function deleteEvent(id) {
 	await firebase.firestore().collection('events').doc(id).delete()
 }
-
-export async function setButtonMode(mode) {
-	await firebase.firestore().collection('settings').doc('button').set({ mode: mode }, {merge: true})
-}
-
 
 export async function updateEvent(event) {
 	await firebase.firestore().collection('events').doc(event.id).update(event)

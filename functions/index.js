@@ -14,21 +14,27 @@ const firebaseConfig = {
 
 admin.initializeApp(firebaseConfig)
 
-exports.processAlarmCreate = functions.firestore.document('alarms/{alarmId}').onCreate(createAlarm)
 exports.processAlarmUpdate = functions.firestore.document('alarms/{alarmId}').onUpdate(updateAlarm)
-exports.processEventCreate = functions.firestore.document('events/{eventId}').onWrite(async (snap, context) => {
-	console.log(context)
-})
+exports.processAlarmDelete = functions.firestore.document('alarms/{alarmId}').onDelete(deleteAlarm)
+
+exports.processEventCreate = functions.firestore.document('events/{eventId}').onCreate(createEvent)
+
 
 /**
- * Function to process alarm creation
- * @param {QueryDocumentSnapshot} snap - Firestore document snapshot
- * @param {EventContext} context - Firestore document context
+ * Function to delete an alarm
+ * @param {QueryDocumentSnapshot} snap - The snapshot of the alarm
  */
-// eslint-disable-next-line no-unused-vars
-async function createAlarm(snap, context) {
-	console.log(snap.data())
+async function deleteAlarm(snap) {
+	const alarm = snap.data()
+  const alarmId = alarm.id
+  const alarmRef = admin.firestore().collection('alarms').doc(alarmId)
+  const nextRef = admin.firestore().collection('next').doc(alarmId)
+  // Delete the alarm
+  await alarmRef.delete()
+  await nextRef.delete()
+	console.log(alarm)
 }
+
 
 /**
  * Function to process alarm update
@@ -86,4 +92,13 @@ function parseRepeat(num) {
 	let binary = num.toString(2)
 	let padded = binary.padStart(7, '0')
 	return padded.split('').reverse().map(e => Number(e))
+}
+
+/**
+ * Function
+ * @param {Change<QueryDocumentSnapshot>} snap - Firestore document snapshot
+ * @param {Object} context - Firestore document context
+ */
+async function createEvent(snap, context) {
+
 }

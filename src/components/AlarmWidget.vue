@@ -13,10 +13,10 @@
 
 <script>
 
-import { createAlarm, subscribeForAlarms } from '@/api'
-import Alarm from '@/components/Alarm'
+import { createAlarm, subscribeForAlarms } from '../api'
+import Alarm from '../components/Alarm'
 import { DateTime } from 'luxon'
-import { parseRepeat } from '@/utils'
+import { parseRepeat } from '../utils'
 
 export default {
 	name: 'AlarmWidget',

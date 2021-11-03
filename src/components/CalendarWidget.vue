@@ -70,11 +70,11 @@ export default {
 
 .widget.calendar {
 	background: #393635;
-	width: 380px;
+	width: 180px;
 	height: 180px;
 	z-index: 1;
 	top: 200px;
-	left: 390px;
+	left: 200px;
 	transition: all .3s;
 	overflow: hidden;
 	padding: 0;
@@ -107,7 +107,7 @@ export default {
 	font-size: 100px !important;
 	position: absolute;
 	top: 45px;
-	left: 240px
+	left: 40px
 }
 
 
