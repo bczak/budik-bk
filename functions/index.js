@@ -1,6 +1,7 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 const { DateTime } = require('luxon')
+const axios = require('axios')
 
 const firebaseConfig = {
 	apiKey: process.env.FIREBASE_API_KEY,
@@ -19,6 +20,7 @@ exports.processAlarmDelete = functions.firestore.document('alarms/{alarmId}').on
 
 exports.processEventCreate = functions.firestore.document('events/{eventId}').onCreate(createEvent)
 
+exports.fetchWeather = functions.https.onCall(fetchWeather)
 
 /**
  * Function to delete an alarm
@@ -26,15 +28,14 @@ exports.processEventCreate = functions.firestore.document('events/{eventId}').on
  */
 async function deleteAlarm(snap) {
 	const alarm = snap.data()
-  const alarmId = alarm.id
-  const alarmRef = admin.firestore().collection('alarms').doc(alarmId)
-  const nextRef = admin.firestore().collection('next').doc(alarmId)
-  // Delete the alarm
-  await alarmRef.delete()
-  await nextRef.delete()
+	const alarmId = alarm.id
+	const alarmRef = admin.firestore().collection('alarms').doc(alarmId)
+	const nextRef = admin.firestore().collection('next').doc(alarmId)
+	// Delete the alarm
+	await alarmRef.delete()
+	await nextRef.delete()
 	console.log(alarm)
 }
-
 
 /**
  * Function to process alarm update
@@ -47,7 +48,7 @@ async function deleteAlarm(snap) {
 // eslint-disable-next-line no-unused-vars
 async function updateAlarm(snap, context) {
 	let alarm = snap.after.data()
-	let now = DateTime.local().setZone("Europe/Prague")
+	let now = DateTime.local().setZone('Europe/Prague')
 	if (alarm.repeat === 0 || alarm.status === false) {
 		return admin.firestore().collection('next').doc(alarm.id).set({ times: [], type: 'alarm' })
 	}
@@ -55,9 +56,9 @@ async function updateAlarm(snap, context) {
 		return parseRepeat(alarm.repeat)[index]
 	})
 	let next = {
-    times: dates,
-    type: 'alarm'
-  }
+		times: dates,
+		type: 'alarm'
+	}
 	return admin.firestore().collection('next').doc(alarm.id).set(next)
 }
 
@@ -70,7 +71,7 @@ async function updateAlarm(snap, context) {
 function generateNextDates(now, time) {
 	let dates = []
 	let date = now.startOf('week')
-	date = date.set({hours: time.split(':')[0], minutes: time.split(":")[1]})
+	date = date.set({ hours: time.split(':')[0], minutes: time.split(':')[1] })
 	while (now.toISO() > date.toISO()) {
 		dates.push(date.plus({ week: 1 }).toISO())
 		date = date.plus({ days: 1 })
@@ -101,4 +102,25 @@ function parseRepeat(num) {
  */
 async function createEvent(snap, context) {
 
+}
+
+/**
+ * Fetches weather data from metaweaather.com
+ */
+async function fetchWeather() {
+	console.log('fetch')
+	const url = 'https://www.metaweather.com/api/location/search/?query=Prague'
+	const response = await axios(url)
+	const data = response.data
+	const woeid = data[0].woeid
+	const url2 = `https://www.metaweather.com/api/location/${ woeid }/`
+	const response2 = await axios(url2)
+	const data2 = response2.data
+	const weather = data2.consolidated_weather[0]
+	console.log()
+	const weatherRef = admin.firestore().collection('settings').doc('temperature')
+	await weatherRef.set({
+		value: Math.floor(weather.the_temp)
+	})
+	return null
 }

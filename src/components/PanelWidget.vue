@@ -32,7 +32,7 @@ import {
 	subscribeForTemperature,
 	subscribeForVolume,
 	updateNextAlarm,
-	updateVolume
+	updateVolume, updateWeather
 } from '../api'
 import { DateTime } from 'luxon'
 import sound from '../assets/mixkit-security-facility-breach-alarm-994.wav'
@@ -66,6 +66,7 @@ export default {
 			this.sound.currentTime = 0
 			this.sound.play()
 		}, true)
+		this.updateWeather()
 		this.sound.loop = true
 		this.sound.volume = this.volume / 100
 		
@@ -90,6 +91,11 @@ export default {
 		})
 	},
 	methods: {
+		
+		updateWeather() {
+			updateWeather()
+			setInterval(() => updateWeather(), 1000 * 60 * 60)
+		},
 		showSlider() {
 			this.slider = true
 			if (this.timeout) {

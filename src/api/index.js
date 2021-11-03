@@ -34,11 +34,11 @@ export async function getAlarm(id) {
 }
 
 export async function updateNextAlarm(id) {
-	await firebase.firestore().collection('alarms').doc(id).update({updated: Date.now()})
+	await firebase.firestore().collection('alarms').doc(id).update({ updated: Date.now() })
 }
 
 export async function updateNextEvent(id) {
-	await firebase.firestore().collection('events').doc(id).update({updated: Date.now()})
+	await firebase.firestore().collection('events').doc(id).update({ updated: Date.now() })
 }
 
 export async function deleteAlarm(id) {
@@ -77,8 +77,9 @@ export async function subscribeForLEDColor(callback) {
 		.doc('led')
 		.onSnapshot((data) => callback(data))
 }
+
 export async function setColor(color) {
-  await firebase.firestore().collection('settings').doc('led').set({ color: color })
+	await firebase.firestore().collection('settings').doc('led').set({ color: color })
 }
 
 export async function updateVolume(volume) {
@@ -91,4 +92,8 @@ export async function deleteEvent(id) {
 
 export async function updateEvent(event) {
 	await firebase.firestore().collection('events').doc(event.id).update(event)
+}
+
+export async function updateWeather() {
+	await firebase.functions().httpsCallable('fetchWeather')()
 }
